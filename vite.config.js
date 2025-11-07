@@ -88,7 +88,7 @@ export default defineConfig(({ mode }) => ({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  base: mode === 'production' ? '/iplaycheck/' : '/',
+  base: mode === 'production' ? './' : '/',
   server: {
     port: 8080,
     host: true
