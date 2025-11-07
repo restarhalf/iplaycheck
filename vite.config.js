@@ -88,7 +88,7 @@ export default defineConfig(({ mode }) => ({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  base: mode === 'production' ? '/dakasys/' : '/',
+  base: mode === 'production' ? '/iplaycheck/' : '/',
   server: {
     port: 8080,
     host: true
