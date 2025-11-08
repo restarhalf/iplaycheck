@@ -9,42 +9,8 @@ export default defineConfig(({ mode }) => ({
     vue(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'robots.txt', 'img/icons/*.png'],
-      manifest: {
-        name: 'PWA打卡系统',
-        short_name: '打卡',
-        description: '基于Vue.js的渐进式Web应用打卡系统',
-        theme_color: '#4DBA87',
-        background_color: '#ffffff',
-        display: 'standalone',
-        orientation: 'portrait',
-        scope: '/',
-        start_url: '/',
-        icons: [
-          {
-            src: 'img/icons/android-chrome-192x192.png',
-            sizes: '192x192',
-            type: 'image/png'
-          },
-          {
-            src: 'img/icons/android-chrome-512x512.png',
-            sizes: '512x512',
-            type: 'image/png'
-          },
-          {
-            src: 'img/icons/android-chrome-maskable-192x192.png',
-            sizes: '192x192',
-            type: 'image/png',
-            purpose: 'maskable'
-          },
-          {
-            src: 'img/icons/android-chrome-maskable-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'maskable'
-          }
-        ]
-      },
+      includeAssets: ['icon.jpg', 'manifest.json'],
+      manifest: false,
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json,vue,txt,woff2}'],
         runtimeCaching: [
@@ -88,7 +54,7 @@ export default defineConfig(({ mode }) => ({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  base: mode === 'production' ? './' : '/',
+  base: mode === 'production' ? '/iplaycheck/' : '/',
   server: {
     port: 8080,
     host: true
@@ -101,7 +67,7 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks: {
           'vue-vendor': ['vue', 'vue-router', 'pinia'],
-          'firebase-vendor': ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/storage']
+          'firebase-vendor': ['firebase/app', 'firebase/auth', 'firebase/firestore']
         }
       }
     }

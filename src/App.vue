@@ -54,9 +54,6 @@
 
     <!-- PWA安装提示 -->
     <PWAInstallPrompt />
-
-    <!-- 网络状态指示器 -->
-    <NetworkStatus />
   </div>
 </template>
 
@@ -66,14 +63,12 @@ import { useUserStore } from '@/store/user';
 import syncService from '@/services/sync';
 import { requestNotificationPermission } from '@/services/firebase';
 import PWAInstallPrompt from '@/components/shared/PWAInstallPrompt.vue';
-import NetworkStatus from '@/components/shared/NetworkStatus.vue';
 
 export default {
   name: 'App',
 
   components: {
-    PWAInstallPrompt,
-    NetworkStatus
+    PWAInstallPrompt
   },
 
   setup() {
