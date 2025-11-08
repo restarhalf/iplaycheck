@@ -5,7 +5,7 @@ import { fileURLToPath, URL } from 'node:url'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: mode === 'production' ? '/' : '/',
+  base: mode === 'production' ? '/iplaycheck/' : '/',
   plugins: [
     vue(),
     VitePWA({

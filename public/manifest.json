@@ -6,11 +6,11 @@
   "background_color": "#f2f2f7",
   "display": "standalone",
   "orientation": "portrait",
-  "scope": "/",
-  "start_url": "/",
+  "scope": "/iplaycheck/",
+  "start_url": "/iplaycheck/",
   "icons": [
     {
-      "src": "/icon.jpg",
+      "src": "/iplaycheck/icon.jpg",
       "sizes": "any",
       "type": "image/jpg"
     }
