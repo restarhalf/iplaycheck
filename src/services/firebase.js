@@ -42,6 +42,11 @@ export const initMessaging = async () => {
 // 请求通知权限并获取FCM token
 export const requestNotificationPermission = async () => {
   try {
+    // 如果被用户在浏览器中永久拒绝（blocked/denied），不要再弹出请求
+    if (typeof Notification !== 'undefined' && Notification.permission === 'denied') {
+      return { status: 'denied', token: null };
+    }
+
     const permission = await Notification.requestPermission();
     if (permission === 'granted') {
       const msg = await initMessaging();
@@ -50,13 +55,17 @@ export const requestNotificationPermission = async () => {
           vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY
         });
         console.log('FCM Token:', token);
-        return token;
+        return { status: 'granted', token };
       }
+      return { status: 'granted', token: null };
     }
+
+    // permission 可能是 'default'（用户关闭提示）或 'denied'
+    return { status: permission, token: null };
   } catch (error) {
     console.error('Notification permission error:', error);
+    return { status: 'error', error, token: null };
   }
-  return null;
 };
 
 // 监听前台消息
