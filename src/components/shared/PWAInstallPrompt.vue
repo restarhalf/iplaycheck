@@ -1,54 +1,46 @@
 <template>
-  <div
-    v-if="showInstallButton"
-    class="pwa-install-button"
-  >
-    <div class="install-content">
-      <AppleButton
-        variant="primary"
-        size="small"
-        @click="install"
-      >
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          class="install-icon"
-        >
-          <path
-            d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-            fill="currentColor"
-          />
-        </svg>
-        安装程序
-      </AppleButton>
-      <button
-        class="dismiss-button"
-        @click="dismiss"
-        title="关闭"
-      >
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          class="dismiss-icon"
-        >
-          <path
-            d="M18 6L6 18M6 6l12 12"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-      </button>
+  <transition name="slide-up">
+    <div
+      v-if="showPrompt"
+      class="install-prompt"
+    >
+      <div class="prompt-card">
+        <div class="prompt-icon">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+          >
+            <path
+              d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+              fill="currentColor"
+            />
+          </svg>
+        </div>
+        <h3>安装应用</h3>
+        <p>将工作室打卡安装到您的设备，享受更好的体验和离线功能。</p>
+        <div class="prompt-actions">
+          <button
+            class="btn-secondary"
+            @click="dismiss"
+          >
+            稍后
+          </button>
+          <button
+            class="btn-primary"
+            @click="install"
+          >
+            安装
+          </button>
+        </div>
+      </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
-import AppleButton from '@/components/shared/AppleButton.vue';
 
-const showInstallButton = ref(false);
+const showPrompt = ref(false);
 const deferredPrompt = ref(null);
 
 const install = async () => {
@@ -66,19 +58,15 @@ const install = async () => {
     const { outcome } = await deferredPrompt.value.userChoice;
     console.log(`用户响应安装提示: ${outcome}`);
     deferredPrompt.value = null;
+    showPrompt.value = false;
 
-    // 不隐藏按钮，让它一直显示
-    // if (outcome === 'accepted') {
-    //   localStorage.setItem('pwa-installed', 'true');
-    //   showInstallButton.value = false;
-    // } else {
-    //   showInstallButton.value = false;
-    // }
+    if (outcome === 'accepted') {
+      localStorage.setItem('pwa-installed', 'true');
+    }
   } else if (import.meta.env.DEV) {
     // 在开发环境中显示提示信息
     alert('在开发环境中，无法实际安装PWA应用。但在生产环境中，用户会看到浏览器的安装提示。');
-    // 不隐藏按钮，让它一直显示
-    // showInstallButton.value = false;
+    showPrompt.value = false;
   } else {
     // 在生产环境中，检查兼容性并提供相应指导
     const compatible = isPWACompatible();
@@ -89,24 +77,32 @@ const install = async () => {
       alert('您的浏览器可能不完全支持PWA安装。请尝试使用以下方法：\n\n1. Chrome/Edge: 在地址栏右侧点击安装图标\n2. Safari: 分享 > 添加到主屏幕\n3. Firefox: 菜单 > 安装此应用\n\n如果您的浏览器不支持PWA，您仍然可以使用网页版应用。');
     }
 
-    // 不隐藏按钮，让它一直显示
-    // showInstallButton.value = false;
-    // localStorage.setItem('pwa-install-dismissed', 'true');
+    showPrompt.value = false;
+    localStorage.setItem('pwa-install-dismissed', 'true');
   }
 };
 
 const dismiss = () => {
-  showInstallButton.value = false;
+  showPrompt.value = false;
   // 在所有环境中都记录用户选择，防止重复提示
   localStorage.setItem('pwa-install-dismissed', 'true');
 };
 
 const showInstallPrompt = () => {
   const dismissed = localStorage.getItem('pwa-install-dismissed');
+  const installed = localStorage.getItem('pwa-installed');
 
-  // 只检查是否被手动关闭，在生产环境下总是显示
-  if (!dismissed) {
-    showInstallButton.value = true;
+  if (!dismissed && !installed) {
+    // 在开发环境中，即使没有deferredPrompt也显示安装提示
+    if (import.meta.env.DEV) {
+      showPrompt.value = true;
+    } else if (deferredPrompt.value) {
+      showPrompt.value = true;
+    } else {
+      // 在生产环境中，如果没有deferredPrompt但用户还没安装过，仍然显示提示
+      // 让用户知道这是PWA应用
+      showPrompt.value = true;
+    }
   }
 };
 
@@ -122,13 +118,7 @@ onMounted(() => {
 
   // 在所有环境中都延迟显示安装提示，给页面加载时间
   setTimeout(() => {
-    const dismissed = localStorage.getItem('pwa-install-dismissed');
-    if (!dismissed) {
-      showInstallButton.value = true;
-      console.log('显示PWA安装按钮');
-    } else {
-      console.log('PWA安装按钮已被手动关闭，不显示');
-    }
+    showInstallPrompt();
   }, 3000); // 延迟3秒显示
 
   // 监听 beforeinstallprompt 事件
@@ -136,22 +126,15 @@ onMounted(() => {
     console.log('收到 beforeinstallprompt 事件');
     e.preventDefault();
     deferredPrompt.value = e;
-    // 如果按钮还没显示，现在显示它
-    if (!showInstallButton.value) {
-      const dismissed = localStorage.getItem('pwa-install-dismissed');
-      if (!dismissed) {
-        showInstallButton.value = true;
-      }
-    }
+    showInstallPrompt();
   };
 
   // 监听 appinstalled 事件
   const handleAppInstalled = () => {
     console.log('PWA 已安装');
-    // 不隐藏按钮，让它一直显示
-    // showInstallButton.value = false;
+    showPrompt.value = false;
     deferredPrompt.value = null;
-    // localStorage.setItem('pwa-installed', 'true');
+    localStorage.setItem('pwa-installed', 'true');
   };
 
   window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -165,87 +148,118 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.pwa-install-button {
+/* PWA 安装提示 */
+.install-prompt {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: calc(var(--z-web-chrome) + 1);
+  max-width: 420px;
+  width: calc(100% - 32px);
+}
+
+.prompt-card {
+  background: var(--systemPrimary-onDark);
+  border-radius: var(--global-border-radius-xlarge);
+  padding: 24px;
+  box-shadow: var(--shadow-large);
+  text-align: center;
+}
+
+@media (prefers-color-scheme: dark) {
+  .prompt-card {
+    background: var(--systemQuaternary);
+    border: 1px solid var(--systemQuaternary-onDark);
+  }
+}
+
+.prompt-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 16px;
+  background: linear-gradient(135deg, var(--keyColor) 0%, #0051d5 100%);
+  border-radius: 14px;
   display: flex;
+  align-items: center;
   justify-content: center;
-  align-items: center;
-  padding: 16px;
-  margin: 20px 0;
+  color: white;
+  box-shadow: 0 4px 12px rgba(var(--keyColor-rgb), 0.3);
 }
 
-.install-content {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.prompt-icon svg {
+  width: 28px;
+  height: 28px;
 }
 
-.dismiss-button {
-  background: none;
-  border: none;
-  padding: 8px;
-  cursor: pointer;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--systemSecondary);
-  transition: all 0.2s ease;
-}
-
-.dismiss-button:hover {
-  background: rgba(var(--systemSecondary-rgb), 0.1);
+.prompt-card h3 {
+  margin: 0 0 8px 0;
+  font: var(--title-2-emphasized);
   color: var(--systemPrimary);
 }
 
-.dismiss-icon {
-  width: 16px;
-  height: 16px;
+.prompt-card p {
+  margin: 0 0 20px 0;
+  font: var(--body);
+  color: var(--systemSecondary);
+  line-height: 1.5;
 }
 
-.install-icon {
-  width: 16px;
-  height: 16px;
-  margin-right: 8px;
+.prompt-actions {
+  display: flex;
+  gap: 12px;
 }
 
-/* 覆盖AppleButton样式，使其有白色背景 */
-:deep(.apple-button.primary) {
-  background: white !important;
-  color: var(--keyColor) !important;
-  border: 1.5px solid var(--keyColor) !important;
-  box-shadow: none !important;
+.btn-primary,
+.btn-secondary {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  border-radius: var(--global-border-radius-small);
+  font: var(--body-emphasized);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: var(--font-family);
 }
 
-:deep(.apple-button.primary:hover:not(:disabled)) {
-  background: rgba(var(--keyColor-rgb), 0.08) !important;
-  transform: none !important;
-  box-shadow: none !important;
+.btn-primary {
+  background: var(--keyColor);
+  color: white;
+  box-shadow: 0 2px 8px rgba(var(--keyColor-rgb), 0.3);
 }
 
-/* 响应式设计 */
-@media (max-width: 768px) {
-  .pwa-install-button {
-    padding: 12px;
-    margin: 16px 0;
-  }
+.btn-primary:hover {
+  background: #0051d5;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(var(--keyColor-rgb), 0.4);
+}
 
-  .install-content {
-    gap: 8px;
-  }
+.btn-primary:active {
+  transform: translateY(0);
+}
 
-  .dismiss-button {
-    padding: 6px;
-  }
+.btn-secondary {
+  background: var(--systemQuinary);
+  color: var(--systemPrimary);
+}
 
-  .dismiss-icon {
-    width: 14px;
-    height: 14px;
-  }
+.btn-secondary:hover {
+  background: var(--systemQuaternary);
+}
 
-  .install-icon {
-    width: 14px;
-    height: 14px;
-    margin-right: 6px;
-  }
+/* 过渡动画 */
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slide-up-enter-from {
+  opacity: 0;
+  transform: translateX(-50%) translateY(20px);
+}
+
+.slide-up-leave-to {
+  opacity: 0;
+  transform: translateX(-50%) translateY(20px);
 }
 </style>
