@@ -3,23 +3,44 @@
     v-if="showInstallButton"
     class="pwa-install-button"
   >
-    <AppleButton
-      variant="primary"
-      size="small"
-      @click="install"
-    >
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        class="install-icon"
+    <div class="install-content">
+      <AppleButton
+        variant="primary"
+        size="small"
+        @click="install"
       >
-        <path
-          d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-          fill="currentColor"
-        />
-      </svg>
-      安装程序
-    </AppleButton>
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          class="install-icon"
+        >
+          <path
+            d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+            fill="currentColor"
+          />
+        </svg>
+        安装程序
+      </AppleButton>
+      <button
+        class="dismiss-button"
+        @click="dismiss"
+        title="关闭"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          class="dismiss-icon"
+        >
+          <path
+            d="M18 6L6 18M6 6l12 12"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+    </div>
   </div>
 </template>
 
@@ -152,6 +173,35 @@ onMounted(() => {
   margin: 20px 0;
 }
 
+.install-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dismiss-button {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--systemSecondary);
+  transition: all 0.2s ease;
+}
+
+.dismiss-button:hover {
+  background: rgba(var(--systemSecondary-rgb), 0.1);
+  color: var(--systemPrimary);
+}
+
+.dismiss-icon {
+  width: 16px;
+  height: 16px;
+}
+
 .install-icon {
   width: 16px;
   height: 16px;
@@ -177,6 +227,19 @@ onMounted(() => {
   .pwa-install-button {
     padding: 12px;
     margin: 16px 0;
+  }
+
+  .install-content {
+    gap: 8px;
+  }
+
+  .dismiss-button {
+    padding: 6px;
+  }
+
+  .dismiss-icon {
+    width: 14px;
+    height: 14px;
   }
 
   .install-icon {
