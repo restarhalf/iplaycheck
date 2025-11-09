@@ -45,15 +45,19 @@ const install = async () => {
     const { outcome } = await deferredPrompt.value.userChoice;
     console.log(`用户响应安装提示: ${outcome}`);
     deferredPrompt.value = null;
-    showPrompt.value = false;
 
-    if (outcome === 'accepted') {
-      localStorage.setItem('pwa-installed', 'true');
-    }
+    // 不隐藏按钮，让它一直显示
+    // if (outcome === 'accepted') {
+    //   localStorage.setItem('pwa-installed', 'true');
+    //   showInstallButton.value = false;
+    // } else {
+    //   showInstallButton.value = false;
+    // }
   } else if (import.meta.env.DEV) {
     // 在开发环境中显示提示信息
     alert('在开发环境中，无法实际安装PWA应用。但在生产环境中，用户会看到浏览器的安装提示。');
-    showInstallButton.value = false;
+    // 不隐藏按钮，让它一直显示
+    // showInstallButton.value = false;
   } else {
     // 在生产环境中，检查兼容性并提供相应指导
     const compatible = isPWACompatible();
@@ -64,8 +68,9 @@ const install = async () => {
       alert('您的浏览器可能不完全支持PWA安装。请尝试使用以下方法：\n\n1. Chrome/Edge: 在地址栏右侧点击安装图标\n2. Safari: 分享 > 添加到主屏幕\n3. Firefox: 菜单 > 安装此应用\n\n如果您的浏览器不支持PWA，您仍然可以使用网页版应用。');
     }
 
-    showInstallButton.value = false;
-    localStorage.setItem('pwa-install-dismissed', 'true');
+    // 不隐藏按钮，让它一直显示
+    // showInstallButton.value = false;
+    // localStorage.setItem('pwa-install-dismissed', 'true');
   }
 };
 
@@ -77,19 +82,10 @@ const dismiss = () => {
 
 const showInstallPrompt = () => {
   const dismissed = localStorage.getItem('pwa-install-dismissed');
-  const installed = localStorage.getItem('pwa-installed');
 
-  if (!dismissed && !installed) {
-    // 在开发环境中，即使没有deferredPrompt也显示安装提示
-    if (import.meta.env.DEV) {
-      showInstallButton.value = true;
-    } else if (deferredPrompt.value) {
-      showInstallButton.value = true;
-    } else {
-      // 在生产环境中，如果没有deferredPrompt但用户还没安装过，仍然显示提示
-      // 让用户知道这是PWA应用
-      showInstallButton.value = true;
-    }
+  // 只检查是否被手动关闭，不检查是否已安装
+  if (!dismissed) {
+    showInstallButton.value = true;
   }
 };
 
@@ -119,9 +115,10 @@ onMounted(() => {
   // 监听 appinstalled 事件
   const handleAppInstalled = () => {
     console.log('PWA 已安装');
-    showInstallButton.value = false;
+    // 不隐藏按钮，让它一直显示
+    // showInstallButton.value = false;
     deferredPrompt.value = null;
-    localStorage.setItem('pwa-installed', 'true');
+    // localStorage.setItem('pwa-installed', 'true');
   };
 
   window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -136,10 +133,11 @@ onMounted(() => {
 
 <style scoped>
 .pwa-install-button {
-  position: fixed;
-  top: 24px;
-  right: 24px;
-  z-index: calc(var(--z-web-chrome) + 1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  margin: 20px 0;
 }
 
 .install-icon {
@@ -148,11 +146,25 @@ onMounted(() => {
   margin-right: 8px;
 }
 
+/* 覆盖AppleButton样式，使其有白色背景 */
+:deep(.apple-button.primary) {
+  background: white !important;
+  color: var(--keyColor) !important;
+  border: 1.5px solid var(--keyColor) !important;
+  box-shadow: none !important;
+}
+
+:deep(.apple-button.primary:hover:not(:disabled)) {
+  background: rgba(var(--keyColor-rgb), 0.08) !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
   .pwa-install-button {
-    top: 16px;
-    right: 16px;
+    padding: 12px;
+    margin: 16px 0;
   }
 
   .install-icon {

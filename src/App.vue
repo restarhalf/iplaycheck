@@ -159,8 +159,6 @@
     <!-- 未登录显示登录页 -->
     <router-view v-else />
 
-    <!-- PWA安装提示 -->
-    <PWAInstallPrompt />
     <!-- 当通知权限被阻止时给出指引 -->
     <AppleToast
       v-model:visible="toastVisible"
@@ -175,14 +173,12 @@ import { computed, ref } from 'vue';
 import { useUserStore } from '@/store/user';
 import syncService from '@/services/sync';
 import { requestNotificationPermission } from '@/services/supabase';
-import PWAInstallPrompt from '@/components/shared/PWAInstallPrompt.vue';
 import AppleToast from '@/components/shared/AppleToast.vue';
 
 export default {
   name: 'App',
 
   components: {
-    PWAInstallPrompt,
     AppleToast
   },
 

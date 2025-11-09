@@ -66,6 +66,9 @@
         </ul>
       </AppleCard>
     </div>
+
+    <!-- PWA安装提示 -->
+    <PWAInstallPrompt />
   </div>
 </template>
 
@@ -74,6 +77,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useUserStore } from '@/store/user'
 import { usePunchStore } from '@/store/punch'
 import AppleCard from '@/components/shared/AppleCard.vue'
+import PWAInstallPrompt from '@/components/shared/PWAInstallPrompt.vue'
 
 const userStore = useUserStore()
 const punchStore = usePunchStore()
