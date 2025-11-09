@@ -30,12 +30,26 @@ export default defineConfig(({ mode }) => ({
             }
           },
           {
-            urlPattern: /^https:\/\/firebasestorage\.googleapis\.com\/.*/i,
+            urlPattern: /^https:\/\/.*\.supabase\.co\/storage\/.*/i, // 仅匹配 Supabase 存储请求
             handler: 'StaleWhileRevalidate',
             options: {
-              cacheName: 'firebase-storage-cache',
+              cacheName: 'supabase-storage-cache',
               expiration: {
                 maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
+          },
+          {
+            urlPattern: /\/profile.*/i, // 添加对 /profile 路由的匹配
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'profile-route-cache',
+              expiration: {
+                maxEntries: 20,
                 maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
               },
               cacheableResponse: {
@@ -67,7 +81,7 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks: {
           'vue-vendor': ['vue', 'vue-router', 'pinia'],
-          'firebase-vendor': ['firebase/app', 'firebase/auth', 'firebase/firestore']
+          'firebase-vendor': ['@supabase/supabase-js']
         }
       }
     }

@@ -1,6 +1,12 @@
 <template>
-  <div id="app" class="app-container">
-    <div v-if="isAuthenticated" class="app-layout">
+  <div
+    id="app"
+    class="app-container"
+  >
+    <div
+      v-if="isAuthenticated"
+      class="app-layout"
+    >
       <nav class="app-nav glass">
         <div class="nav-container">
           <div class="nav-brand">
@@ -8,32 +14,133 @@
           </div>
           
           <div class="nav-menu">
-            <router-link to="/" class="nav-link" exact-active-class="active">
-              <svg viewBox="0 0 24 24" fill="none" class="nav-icon">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <router-link
+              to="/"
+              class="nav-link"
+              exact-active-class="active"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                class="nav-icon"
+              >
+                <path
+                  d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
               </svg>
               <span>首页</span>
             </router-link>
-            <router-link to="/punch" class="nav-link" exact-active-class="active">
-              <svg viewBox="0 0 24 24" fill="none" class="nav-icon">
-                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-                <polyline points="12 6 12 12 16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <router-link
+              to="/punch"
+              class="nav-link"
+              exact-active-class="active"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                class="nav-icon"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+                <polyline
+                  points="12 6 12 12 16 14"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
               </svg>
               <span>打卡</span>
             </router-link>
-            <router-link v-if="isAdmin" to="/admin" class="nav-link" exact-active-class="active">
-              <svg viewBox="0 0 24 24" fill="none" class="nav-icon">
-                <rect x="3" y="3" width="7" height="7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <rect x="14" y="3" width="7" height="7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <rect x="14" y="14" width="7" height="7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <rect x="3" y="14" width="7" height="7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <router-link
+              v-if="isAdmin"
+              to="/admin"
+              class="nav-link"
+              exact-active-class="active"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                class="nav-icon"
+              >
+                <rect
+                  x="3"
+                  y="3"
+                  width="7"
+                  height="7"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <rect
+                  x="14"
+                  y="3"
+                  width="7"
+                  height="7"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <rect
+                  x="14"
+                  y="14"
+                  width="7"
+                  height="7"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <rect
+                  x="3"
+                  y="14"
+                  width="7"
+                  height="7"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
               </svg>
               <span>管理</span>
             </router-link>
-            <router-link to="/profile" class="nav-link" exact-active-class="active">
-              <svg viewBox="0 0 24 24" fill="none" class="nav-icon">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <router-link
+              to="/profile"
+              class="nav-link"
+              exact-active-class="active"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                class="nav-icon"
+              >
+                <path
+                  d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <circle
+                  cx="12"
+                  cy="7"
+                  r="4"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
               </svg>
               <span>我的</span>
             </router-link>
@@ -55,7 +162,11 @@
     <!-- PWA安装提示 -->
     <PWAInstallPrompt />
     <!-- 当通知权限被阻止时给出指引 -->
-    <AppleToast :message="toastMessage" :type="toastType" v-model:visible="toastVisible" />
+    <AppleToast
+      v-model:visible="toastVisible"
+      :message="toastMessage"
+      :type="toastType"
+    />
   </div>
 </template>
 
@@ -63,7 +174,7 @@
 import { computed, ref } from 'vue';
 import { useUserStore } from '@/store/user';
 import syncService from '@/services/sync';
-import { requestNotificationPermission } from '@/services/firebase';
+import { requestNotificationPermission } from '@/services/supabase';
 import PWAInstallPrompt from '@/components/shared/PWAInstallPrompt.vue';
 import AppleToast from '@/components/shared/AppleToast.vue';
 

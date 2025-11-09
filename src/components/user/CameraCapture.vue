@@ -7,56 +7,62 @@
         autoplay
         playsinline
         :class="{ 'camera-active': isCameraActive }"
-      ></video>
+      />
 
       <canvas
         ref="canvasElement"
         class="camera-canvas"
         :class="{ 'show-preview': showPreview }"
-      ></canvas>
+      />
 
-      <div v-if="capturedPhoto" class="photo-preview">
-        <img :src="capturedPhoto" alt="Captured Photo" />
+      <div
+        v-if="capturedPhoto"
+        class="photo-preview"
+      >
+        <img
+          :src="capturedPhoto"
+          alt="Captured Photo"
+        >
       </div>
     </div>
 
     <div class="camera-controls">
       <AppleButton
         v-if="!isCameraActive"
-        @click="startCamera"
         variant="secondary"
         size="large"
         :loading="loading"
         class="full-width-btn"
+        @click="startCamera"
       >
         启动相机
       </AppleButton>
 
       <template v-else>
         <AppleButton
-          @click="capturePhoto"
           variant="secondary"
           size="large"
           :disabled="loading"
+          @click="capturePhoto"
         >
           拍照
         </AppleButton>
 
         <AppleButton
           v-if="hasMutipleCameras"
-          @click="switchCamera"
           variant="secondary"
           size="large"
           :disabled="loading"
+          @click="switchCamera"
         >
           切换相机
         </AppleButton>
 
         <AppleButton
-          @click="stopCamera"
           variant="secondary"
           size="large"
           :disabled="loading"
+          @click="stopCamera"
         >
           关闭
         </AppleButton>
@@ -64,24 +70,28 @@
 
       <AppleButton
         v-if="capturedPhoto"
-        @click="retakePhoto"
         variant="secondary"
         size="large"
+        @click="retakePhoto"
       >
         重拍
       </AppleButton>
 
       <AppleButton
         v-if="capturedPhoto"
-        @click="confirmPhoto"
         variant="secondary"
         size="large"
+        @click="confirmPhoto"
       >
         确认
       </AppleButton>
     </div>
 
-    <AppleCard v-if="permissionDenied" variant="elevated" class="permission-guide">
+    <AppleCard
+      v-if="permissionDenied"
+      variant="elevated"
+      class="permission-guide"
+    >
       <h3>需要相机权限</h3>
       <p>请在浏览器设置中允许相机访问:</p>
       <ol>
@@ -94,15 +104,15 @@
 
     <AppleToast
       :visible="!!error"
-      @update:visible="error = ''"
       type="error"
       :message="error"
+      @update:visible="error = ''"
     />
   </div>
 </template>
 
 <script>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onUnmounted } from 'vue';
 import CameraService from '@/services/camera';
 import AppleButton from '@/components/shared/AppleButton.vue';
 import AppleCard from '@/components/shared/AppleCard.vue';

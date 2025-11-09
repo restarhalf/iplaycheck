@@ -8,19 +8,32 @@
           type="text"
           placeholder="搜索用户..."
           class="search-input"
-        />
-        <select v-model="filterType" class="filter-select">
-          <option value="">所有类型</option>
-          <option value="in">上班</option>
-          <option value="out">下班</option>
-          <option value="break_start">开始休息</option>
-          <option value="break_end">结束休息</option>
+        >
+        <select
+          v-model="filterType"
+          class="filter-select"
+        >
+          <option value="">
+            所有类型
+          </option>
+          <option value="in">
+            上班
+          </option>
+          <option value="out">
+            下班
+          </option>
+          <option value="break_start">
+            开始休息
+          </option>
+          <option value="break_end">
+            结束休息
+          </option>
         </select>
         <input
           v-model="filterDate"
           type="date"
           class="filter-date"
-        />
+        >
       </div>
     </div>
 
@@ -37,26 +50,41 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="record in filteredRecords" :key="record.id">
+          <tr
+            v-for="record in filteredRecords"
+            :key="record.id"
+          >
             <td>{{ formatDateTime(record.timestamp) }}</td>
             <td>{{ getUserName(record.userId) }}</td>
             <td>
-              <span class="type-badge" :class="`type-${record.type}`">
+              <span
+                class="type-badge"
+                :class="`type-${record.type}`"
+              >
                 {{ getTypeName(record.type) }}
               </span>
             </td>
             <td>
-              <button @click="viewPhoto(record)" class="btn-icon">
+              <button
+                class="btn-icon"
+                @click="viewPhoto(record)"
+              >
                 📷
               </button>
             </td>
             <td>
-              <span class="sync-badge" :class="record.synced ? 'synced' : 'pending'">
+              <span
+                class="sync-badge"
+                :class="record.synced ? 'synced' : 'pending'"
+              >
                 {{ record.synced ? '已同步' : '待同步' }}
               </span>
             </td>
             <td>
-              <button @click="viewDetails(record)" class="btn-action">
+              <button
+                class="btn-action"
+                @click="viewDetails(record)"
+              >
                 查看
               </button>
             </td>
@@ -67,14 +95,30 @@
 
     <!-- 照片查看对话框 -->
     <Teleport to="body">
-      <div v-if="showPhotoModal" class="modal-overlay" @click="showPhotoModal = false">
-        <div class="modal-card" @click.stop>
+      <div
+        v-if="showPhotoModal"
+        class="modal-overlay"
+        @click="showPhotoModal = false"
+      >
+        <div
+          class="modal-card"
+          @click.stop
+        >
           <div class="modal-header">
             <h3>打卡照片</h3>
-            <button class="close-button" @click="showPhotoModal = false">×</button>
+            <button
+              class="close-button"
+              @click="showPhotoModal = false"
+            >
+              ×
+            </button>
           </div>
           <div class="modal-body">
-            <img :src="selectedRecord?.photo" alt="打卡照片" class="photo-view" />
+            <img
+              :src="selectedRecord?.photo"
+              alt="打卡照片"
+              class="photo-view"
+            >
           </div>
         </div>
       </div>
@@ -82,11 +126,23 @@
 
     <!-- 详情对话框 -->
     <Teleport to="body">
-      <div v-if="showDetailsModal" class="modal-overlay" @click="showDetailsModal = false">
-        <div class="modal-card detail-modal" @click.stop>
+      <div
+        v-if="showDetailsModal"
+        class="modal-overlay"
+        @click="showDetailsModal = false"
+      >
+        <div
+          class="modal-card detail-modal"
+          @click.stop
+        >
           <div class="modal-header">
             <h3>打卡详情</h3>
-            <button class="close-button" @click="showDetailsModal = false">×</button>
+            <button
+              class="close-button"
+              @click="showDetailsModal = false"
+            >
+              ×
+            </button>
           </div>
           <div class="modal-body">
             <div class="detail-section">
@@ -103,7 +159,10 @@
                 <div class="detail-item">
                   <span class="label">打卡类型</span>
                   <span class="value">
-                    <span class="type-badge" :class="`type-${selectedRecord?.type}`">
+                    <span
+                      class="type-badge"
+                      :class="`type-${selectedRecord?.type}`"
+                    >
                       {{ getTypeName(selectedRecord?.type) }}
                     </span>
                   </span>
@@ -111,7 +170,10 @@
                 <div class="detail-item">
                   <span class="label">同步状态</span>
                   <span class="value">
-                    <span class="sync-badge" :class="selectedRecord?.synced ? 'synced' : 'pending'">
+                    <span
+                      class="sync-badge"
+                      :class="selectedRecord?.synced ? 'synced' : 'pending'"
+                    >
                       {{ selectedRecord?.synced ? '已同步' : '待同步' }}
                     </span>
                   </span>
@@ -119,14 +181,24 @@
               </div>
             </div>
 
-            <div class="detail-section" v-if="selectedRecord?.photo">
+            <div
+              v-if="selectedRecord?.photo"
+              class="detail-section"
+            >
               <h4>打卡照片</h4>
               <div class="photo-container">
-                <img :src="selectedRecord.photo" alt="打卡照片" class="detail-photo" />
+                <img
+                  :src="selectedRecord.photo"
+                  alt="打卡照片"
+                  class="detail-photo"
+                >
               </div>
             </div>
 
-            <div class="detail-section" v-if="selectedRecord?.syncedAt">
+            <div
+              v-if="selectedRecord?.syncedAt"
+              class="detail-section"
+            >
               <h4>同步信息</h4>
               <div class="detail-grid">
                 <div class="detail-item">
@@ -135,7 +207,7 @@
                 </div>
                 <div class="detail-item">
                   <span class="label">创建时间</span>
-                  <span class="value">{{ formatDateTime(selectedRecord.createdAt) }}</span>
+                  <span class="value">{{ formatDateTime(selectedRecord?.timestamp) }}</span>
                 </div>
               </div>
             </div>
@@ -148,8 +220,7 @@
 
 <script>
 import { ref, computed, onMounted } from 'vue';
-import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
-import { db } from '@/services/firebase';
+import { supabase } from '@/services/supabase';
 
 export default {
   name: 'RecordsList',
@@ -183,10 +254,15 @@ export default {
     // 加载用户数据
     const loadUsers = async () => {
       try {
-        const usersSnapshot = await getDocs(collection(db, 'users'));
+        const { data, error } = await supabase
+          .from('users')
+          .select('*');
+
+        if (error) throw error;
+
         const usersMap = new Map();
-        usersSnapshot.docs.forEach(doc => {
-          usersMap.set(doc.id, doc.data());
+        data.forEach(user => {
+          usersMap.set(user.id, user);
         });
         users.value = usersMap;
       } catch (error) {
@@ -196,16 +272,18 @@ export default {
 
     const loadRecords = async () => {
       try {
-        const q = query(
-          collection(db, 'punchRecords'),
-          orderBy('timestamp', 'desc'),
-          limit(100)
-        );
-        const snapshot = await getDocs(q);
-        records.value = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          synced: true // Firebase 中的数据都是已同步的
+        const { data, error } = await supabase
+          .from('punch_records')
+          .select('*')
+          .order('timestamp', { ascending: false })
+          .limit(100);
+
+        if (error) throw error;
+
+        records.value = data.map(record => ({
+          id: record.id,
+          ...record,
+          synced: true
         }));
       } catch (error) {
         console.error('Load records error:', error);

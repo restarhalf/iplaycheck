@@ -2,20 +2,42 @@
   <div class="punch-clock">
     <!-- 大时钟显示 -->
     <div class="clock-section">
-      <div class="current-time">{{ currentTime }}</div>
-      <div class="current-date">{{ currentDate }}</div>
+      <div class="current-time">
+        {{ currentTime }}
+      </div>
+      <div class="current-date">
+        {{ currentDate }}
+      </div>
     </div>
 
     <!-- 工作状态卡片 -->
-    <AppleCard variant="elevated" class="status-card-wrapper">
+    <AppleCard
+      variant="elevated"
+      class="status-card-wrapper"
+    >
       <div class="status-card">
-        <div class="status-indicator" :class="statusClass"></div>
+        <div
+          class="status-indicator"
+          :class="statusClass"
+        />
         <div class="status-info">
-          <div class="status-title">{{ statusText }}</div>
-          <div class="status-subtitle">{{ statusSubtitle }}</div>
-          <div v-if="autoBreakEnabled" class="auto-break-indicator">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          <div class="status-title">
+            {{ statusText }}
+          </div>
+          <div class="status-subtitle">
+            {{ statusSubtitle }}
+          </div>
+          <div
+            v-if="autoBreakEnabled"
+            class="auto-break-indicator"
+          >
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
             </svg>
             自动休息已启用
           </div>
@@ -23,18 +45,52 @@
       </div>
     </AppleCard>
 
-    <!-- 今日统计 -->
-    <div class="stats-grid">
-      <AppleCard variant="elevated" hoverable>
-        <div class="stat-card">
-          <div class="stat-value">{{ workDuration }}</div>
-          <div class="stat-label">学习时长</div>
+    <!-- 同步状态 -->
+    <div
+      v-if="isSyncing || syncMessage"
+      class="sync-status"
+    >
+      <AppleCard variant="elevated">
+        <div class="sync-content">
+          <div
+            v-if="isSyncing"
+            class="sync-indicator"
+          >
+            <AppleLoading size="small" />
+          </div>
+          <div class="sync-message">
+            {{ syncMessage || '正在同步...' }}
+          </div>
         </div>
       </AppleCard>
-      <AppleCard variant="elevated" hoverable>
+    </div>
+
+    <!-- 今日统计 -->
+    <div class="stats-grid">
+      <AppleCard
+        variant="elevated"
+        hoverable
+      >
         <div class="stat-card">
-          <div class="stat-value">{{ breakDuration }}</div>
-          <div class="stat-label">休息时长</div>
+          <div class="stat-value">
+            {{ workDuration }}
+          </div>
+          <div class="stat-label">
+            学习时长
+          </div>
+        </div>
+      </AppleCard>
+      <AppleCard
+        variant="elevated"
+        hoverable
+      >
+        <div class="stat-card">
+          <div class="stat-value">
+            {{ breakDuration }}
+          </div>
+          <div class="stat-label">
+            休息时长
+          </div>
         </div>
       </AppleCard>
     </div>
@@ -44,41 +100,94 @@
       <button 
         class="punch-button" 
         :class="buttonClass"
-        @click="handlePunch"
         :disabled="loading || workStatus === 'break'"
+        @click="handlePunch"
       >
         <div class="button-content">
           <div class="button-icon">
-            <div class="pulse-ring" v-if="workStatus === 'working'"></div>
-            <svg width="40" height="40" viewBox="0 0 40 40" v-if="!loading">
-              <circle cx="20" cy="20" r="18" fill="none" stroke="currentColor" stroke-width="2"/>
-              <path d="M20 8 L20 20 L28 20" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+            <div
+              v-if="workStatus === 'working'"
+              class="pulse-ring"
+            />
+            <svg
+              v-if="!loading"
+              width="40"
+              height="40"
+              viewBox="0 0 40 40"
+            >
+              <circle
+                cx="20"
+                cy="20"
+                r="18"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              />
+              <path
+                d="M20 8 L20 20 L28 20"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+              />
             </svg>
-            <AppleLoading v-else size="medium" />
+            <AppleLoading
+              v-else
+              size="medium"
+            />
           </div>
-          <div class="button-text">{{ buttonText }}</div>
+          <div class="button-text">
+            {{ buttonText }}
+          </div>
         </div>
       </button>
     </div>
 
     <!-- 快速操作 -->
-    <div class="quick-actions" v-if="workStatus === 'working'">
-      <AppleButton variant="secondary" size="large" @click="startBreak" :disabled="loading" class="flex-1">
+    <div
+      v-if="workStatus === 'working'"
+      class="quick-actions"
+    >
+      <AppleButton
+        variant="secondary"
+        size="large"
+        :disabled="loading"
+        class="flex-1"
+        @click="startBreak"
+      >
         休息
       </AppleButton>
-      <AppleButton variant="secondary" size="large" @click="handlePunchOut" :disabled="loading" class="flex-1">
+      <AppleButton
+        variant="secondary"
+        size="large"
+        :disabled="loading"
+        class="flex-1"
+        @click="handlePunchOut"
+      >
         下班
       </AppleButton>
     </div>
 
-    <div class="quick-actions" v-if="workStatus === 'break'">
-      <AppleButton variant="secondary" size="large" @click="endBreak" :disabled="loading" class="full-width">
+    <div
+      v-if="workStatus === 'break'"
+      class="quick-actions"
+    >
+      <AppleButton
+        variant="secondary"
+        size="large"
+        :disabled="loading"
+        class="full-width"
+        @click="endBreak"
+      >
         歇够了
       </AppleButton>
     </div>
 
     <!-- 今日记录 -->
-    <AppleCard variant="elevated" v-if="todayRecords.length > 0" class="records-section-wrapper">
+    <AppleCard
+      v-if="todayRecords.length > 0"
+      variant="elevated"
+      class="records-section-wrapper"
+    >
       <div class="records-section">
         <div class="section-header">
           <h3>今日记录</h3>
@@ -86,11 +195,14 @@
         </div>
         <div class="records-list">
           <div 
-            class="record-item" 
             v-for="record in todayRecords" 
-            :key="record.id"
+            :key="record.id" 
+            class="record-item"
           >
-            <div class="record-type-icon" :class="record.type">
+            <div
+              class="record-type-icon"
+              :class="record.type"
+            >
               <span v-if="record.type === 'in'">上班</span>
               <span v-else-if="record.type === 'out'">下班</span>
               <span v-else-if="record.type === 'break_start'">
@@ -98,7 +210,9 @@
               </span>
               <span v-else>{{ record.autoTriggered ? '自动结束休息' : '结束休息' }}</span>
             </div>
-            <div class="record-time">{{ formatTime(record.timestamp) }}</div>
+            <div class="record-time">
+              {{ formatTime(record.timestamp) }}
+            </div>
           </div>
         </div>
       </div>
@@ -106,13 +220,33 @@
 
     <!-- 拍照 Modal -->
     <Teleport to="body">
-      <div class="modal-overlay" v-if="showCamera" @click="cancelPunch">
-        <div class="modal-card camera-modal" @click.stop>
+      <div
+        v-if="showCamera"
+        class="modal-overlay"
+        @click="cancelPunch"
+      >
+        <div
+          class="modal-card camera-modal"
+          @click.stop
+        >
           <div class="modal-header">
             <h3>拍照打卡</h3>
-            <button class="close-button" @click="cancelPunch">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M15 5L5 15M5 5l10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <button
+              class="close-button"
+              @click="cancelPunch"
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+              >
+                <path
+                  d="M15 5L5 15M5 5l10 10"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
               </svg>
             </button>
           </div>
@@ -124,17 +258,15 @@
     <!-- Toast 通知 -->
     <AppleToast 
       :visible="!!error"
-      @update:visible="error = ''"
       type="error"
       :message="error"
+      @update:visible="error = ''"
     />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
-import { doc, getDoc } from 'firebase/firestore'
-import { db } from '@/services/firebase'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { usePunchStore } from '@/store/punch'
 import { useUserStore } from '@/store/user'
 import CameraCapture from './CameraCapture.vue'
@@ -142,39 +274,24 @@ import AppleButton from '@/components/shared/AppleButton.vue'
 import AppleCard from '@/components/shared/AppleCard.vue'
 import AppleLoading from '@/components/shared/AppleLoading.vue'
 import AppleToast from '@/components/shared/AppleToast.vue'
+import syncService from '@/services/sync'
 
 const punchStore = usePunchStore()
 const userStore = useUserStore()
 
 // 自动休息功能
 const autoBreakEnabled = ref(false)
-const lastInRangeTime = ref(null)
 
 // 触发自动休息
-const triggerAutoBreak = async () => {
-  try {
-    const userId = userStore.userId
-    if (!userId) return
-
-    await punchStore.startBreak(userId, { autoTriggered: true })
-    
-    // 显示通知
-    error.value = '检测到您已离开工作范围，已自动开始休息'
-    setTimeout(() => {
-      error.value = ''
-    }, 5000)
-
-  } catch (err) {
-    console.error('自动休息失败:', err)
-  }
-}
-
 const currentTime = ref('')
 const currentDate = ref('')
 const loading = ref(false)
 const error = ref('')
 const showCamera = ref(false)
 const currentPunchType = ref('')
+const photoData = ref(null) // 添加照片数据ref
+const isSyncing = ref(false) // 同步状态
+const syncMessage = ref('') // 同步消息
 let timeInterval = null
 
 // 更新时间
@@ -285,11 +402,42 @@ const formatTime = (timestamp) => {
 }
 
 // 处理打卡
-const handlePunch = () => {
-  if (workStatus.value === 'idle') {
-    startPunchIn()
-  } else if (workStatus.value === 'working') {
-    handlePunchOut()
+const handlePunch = async () => {
+  if (!userStore.isAuthenticated) {
+    error.value = '用户未登录，请先登录后再打卡';
+    return;
+  }
+
+  try {
+    loading.value = true;
+    const punchType = workStatus.value === 'working' ? 'out' : 'in';
+
+    // 检查是否需要拍照
+    const needPhoto = true; // 可以在这里添加配置来控制是否需要照片
+    if (needPhoto && !photoData.value) {
+      // 显示拍照界面
+      currentPunchType.value = punchType;
+      showCamera.value = true;
+      return;
+    }
+
+    // 保存打卡记录
+    await punchStore.createPunchRecord(punchType, userStore.userId, {
+      photo: photoData.value,
+      requirePhoto: true
+    });
+
+    // 清理状态
+    photoData.value = null;
+    currentPunchType.value = '';
+
+    // 更新记录
+    await punchStore.loadRecords(userStore.userId);
+  } catch (err) {
+    console.error('Punch error:', err);
+    error.value = '打卡失败，请稍后重试';
+  } finally {
+    loading.value = false;
   }
 }
 
@@ -318,10 +466,32 @@ const endBreak = () => {
 }
 
 // 拍照完成
-const handlePhotoConfirmed = (photo) => {
-  console.log('拍照完成,照片大小:', photo?.length)
-  showCamera.value = false
-  submitPunch(photo)
+const handlePhotoConfirmed = async (photo) => {
+  try {
+    loading.value = true;
+
+    // 保存照片数据
+    photoData.value = photo;
+
+    // 执行打卡
+    await punchStore.createPunchRecord(currentPunchType.value, userStore.userId, {
+      photo: photoData.value,
+      requirePhoto: true
+    });
+
+    // 清理状态
+    showCamera.value = false;
+    photoData.value = null;
+    currentPunchType.value = '';
+
+    // 更新记录
+    await punchStore.loadRecords(userStore.userId);
+  } catch (err) {
+    console.error('Punch error:', err);
+    error.value = '打卡失败，请稍后重试';
+  } finally {
+    loading.value = false;
+  }
 }
 
 // 提交打卡
@@ -374,22 +544,43 @@ const cancelPunch = () => {
   currentPunchType.value = ''
 }
 
-onMounted(async () => {
-  updateTime()
-  timeInterval = setInterval(updateTime, 1000)
-  
-  // 加载记录和工作状态
-  try {
-    const userId = userStore.userId
-    if (userId) {
-      await punchStore.loadRecords(userId)
-    }
-  } catch (error) {
-    console.error('加载打卡记录失败:', error)
+// 同步状态监听器
+const syncListener = (event, data) => {
+  if (event === 'sync_started') {
+    isSyncing.value = true
+    syncMessage.value = '正在同步到云端...'
+  } else if (event === 'sync_completed') {
+    isSyncing.value = false
+    syncMessage.value = '同步完成'
+    // 3秒后清除消息
+    setTimeout(() => {
+      syncMessage.value = ''
+    }, 3000)
+  } else if (event === 'sync_error') {
+    isSyncing.value = false
+    syncMessage.value = '同步失败，请检查网络连接'
+    // 5秒后清除消息
+    setTimeout(() => {
+      syncMessage.value = ''
+    }, 5000)
   }
-})
+}
+
+onMounted(async () => {
+  // 设置同步监听器
+  syncService.addListener(syncListener)
+  
+  try {
+    await punchStore.loadRecords(userStore.userId);
+  } catch (error) {
+    console.error('Failed to load punch records:', error);
+  }
+});
 
 onUnmounted(() => {
+  // 清理同步监听器
+  syncService.removeListener(syncListener)
+  
   if (timeInterval) {
     clearInterval(timeInterval)
   }
@@ -497,6 +688,27 @@ onUnmounted(() => {
 
 .auto-break-indicator svg {
   flex-shrink: 0;
+}
+
+/* 同步状态 */
+.sync-status {
+  margin-bottom: 24px;
+}
+
+.sync-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+}
+
+.sync-indicator {
+  flex-shrink: 0;
+}
+
+.sync-message {
+  font: var(--body);
+  color: var(--systemSecondary);
 }
 
 /* 统计网格 */

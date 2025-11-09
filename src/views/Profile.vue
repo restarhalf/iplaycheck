@@ -1,16 +1,35 @@
 <template>
   <div class="profile">
     <!-- 个人信息卡片 -->
-    <AppleCard variant="elevated" class="profile-card">
+    <AppleCard
+      variant="elevated"
+      class="profile-card"
+    >
       <div class="profile-header">
         <div class="avatar">
-          <svg viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="8" r="5" stroke="currentColor" stroke-width="2"/>
-            <path d="M4 21c0-4 3-7 8-7s8 3 8 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+          >
+            <circle
+              cx="12"
+              cy="8"
+              r="5"
+              stroke="currentColor"
+              stroke-width="2"
+            />
+            <path
+              d="M4 21c0-4 3-7 8-7s8 3 8 7"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
           </svg>
         </div>
         <h1>{{ profile?.name }}</h1>
-        <p class="role-badge">{{ profile?.role === 'admin' ? '管理员' : '用户' }}</p>
+        <p class="role-badge">
+          {{ profile?.role === 'admin' ? '管理员' : '用户' }}
+        </p>
       </div>
     </AppleCard>
 
@@ -25,7 +44,7 @@
           </div>
           <div class="info-item">
             <span class="info-label">注册时间</span>
-            <span class="info-value">{{ formatDate(profile?.createdAt) }}</span>
+            <span class="info-value">{{ formatDate(profile?.created_at) }}</span>
           </div>
         </div>
       </div>
@@ -35,16 +54,32 @@
     <AppleCard class="stats-card">
       <h3>打卡统计</h3>
       <div class="stats-grid">
-        <AppleCard variant="elevated" hoverable class="stat-item">
+        <AppleCard
+          variant="elevated"
+          hoverable
+          class="stat-item"
+        >
           <div class="stat-content">
-            <div class="stat-value">{{ totalRecords }}</div>
-            <div class="stat-label">总打卡</div>
+            <div class="stat-value">
+              {{ totalRecords }}
+            </div>
+            <div class="stat-label">
+              总打卡
+            </div>
           </div>
         </AppleCard>
-        <AppleCard variant="elevated" hoverable class="stat-item">
+        <AppleCard
+          variant="elevated"
+          hoverable
+          class="stat-item"
+        >
           <div class="stat-content">
-            <div class="stat-value">{{ todayRecords }}</div>
-            <div class="stat-label">今日打卡</div>
+            <div class="stat-value">
+              {{ todayRecords }}
+            </div>
+            <div class="stat-label">
+              今日打卡
+            </div>
           </div>
         </AppleCard>
       </div>
@@ -55,24 +90,54 @@
       <AppleButton 
         variant="secondary" 
         size="large" 
-        @click="showChangePwdModal = true"
         class="change-pwd-btn"
+        @click="showChangePwdModal = true"
       >
-        <svg viewBox="0 0 24 24" fill="none">
-          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke="currentColor" stroke-width="2"/>
-          <circle cx="12" cy="16" r="1" fill="currentColor"/>
-          <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" stroke-width="2"/>
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+        >
+          <rect
+            x="3"
+            y="11"
+            width="18"
+            height="11"
+            rx="2"
+            ry="2"
+            stroke="currentColor"
+            stroke-width="2"
+          />
+          <circle
+            cx="12"
+            cy="16"
+            r="1"
+            fill="currentColor"
+          />
+          <path
+            d="M7 11V7a5 5 0 0 1 10 0v4"
+            stroke="currentColor"
+            stroke-width="2"
+          />
         </svg>
         修改密码
       </AppleButton>
       <AppleButton 
         variant="danger" 
         size="large" 
-        @click="logout"
         class="logout-btn"
+        @click="logout"
       >
-        <svg viewBox="0 0 24 24" fill="none">
-          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+        >
+          <path
+            d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
         </svg>
         退出登录
       </AppleButton>
@@ -80,28 +145,68 @@
 
     <!-- 修改密码模态框 -->
     <Teleport to="body">
-      <div v-if="showChangePwdModal" class="modal-overlay" @click.self="closePwdModal">
+      <div
+        v-if="showChangePwdModal"
+        class="modal-overlay"
+        @click.self="closePwdModal"
+      >
         <AppleCard class="modal-content">
           <h3>修改密码</h3>
           <form @submit.prevent="changePassword">
             <div class="form-group">
               <label>当前密码</label>
-              <input v-model="oldPassword" type="password" required />
+              <input
+                v-model="oldPassword"
+                type="password"
+                required
+              >
             </div>
             <div class="form-group">
               <label>新密码</label>
-              <input v-model="newPassword" type="password" required minlength="6" />
+              <input
+                v-model="newPassword"
+                type="password"
+                required
+                minlength="6"
+              >
             </div>
             <div class="form-group">
               <label>确认新密码</label>
-              <input v-model="confirmPassword" type="password" required minlength="6" />
+              <input
+                v-model="confirmPassword"
+                type="password"
+                required
+                minlength="6"
+              >
             </div>
             <div class="form-actions">
-              <AppleButton variant="primary" type="submit" :disabled="loading">保存</AppleButton>
-              <AppleButton variant="secondary" type="button" @click="closePwdModal">取消</AppleButton>
+              <AppleButton
+                variant="primary"
+                type="submit"
+                :disabled="loading"
+              >
+                保存
+              </AppleButton>
+              <AppleButton
+                variant="secondary"
+                type="button"
+                @click="closePwdModal"
+              >
+                取消
+              </AppleButton>
             </div>
-            <div v-if="pwdError" class="error-msg">{{ pwdError }}</div>
-            <div v-if="pwdSuccess" class="success-msg">{{ pwdSuccess }}</div>
+            <div
+              v-if="pwdError"
+              class="error-msg"
+            >
+              {{ pwdError }}
+            </div>
+            <div
+              v-if="pwdSuccess"
+              class="success-msg"
+            >
+              {{ pwdSuccess }}
+            </div>
           </form>
         </AppleCard>
       </div>
@@ -114,8 +219,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/store/user';
 import { usePunchStore } from '@/store/punch';
-import { updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
-import { auth } from '@/services/firebase';
+import { supabase } from '@/services/supabase';
 import AppleCard from '@/components/shared/AppleCard.vue';
 import AppleButton from '@/components/shared/AppleButton.vue';
 
@@ -202,28 +306,36 @@ export default {
       loading.value = true;
       
       try {
-        const user = auth.currentUser;
-        if (!user || !user.email) {
+        // 获取当前用户信息
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError || !user || !user.email) {
           throw new Error('用户未登录');
         }
         
-        // 先用旧密码重新认证
-        const credential = EmailAuthProvider.credential(user.email, oldPassword.value);
-        await reauthenticateWithCredential(user, credential);
+        // Supabase密码更新不需要重新认证，直接更新
+        const { error } = await supabase.auth.updateUser({
+          password: newPassword.value
+        });
+
+        if (error) throw error;
         
-        // 重新认证成功后，更新密码
-        await updatePassword(user, newPassword.value);
+        pwdSuccess.value = '密码修改成功，正在退出所有设备...';
         
-        pwdSuccess.value = '密码修改成功';
-        setTimeout(() => {
-          closePwdModal();
+        // 密码修改成功后，退出所有设备以确保安全
+        setTimeout(async () => {
+          try {
+            await supabase.auth.signOut({ scope: 'global' });
+            // 退出后会自动跳转到登录页面
+          } catch (signOutError) {
+            console.error('退出登录失败:', signOutError);
+            // 即使退出失败，也关闭模态框
+            closePwdModal();
+          }
         }, 1500);
         
       } catch (error) {
         console.error('修改密码失败:', error);
-        if (error.code === 'auth/wrong-password') {
-          pwdError.value = '当前密码错误';
-        } else if (error.code === 'auth/weak-password') {
+        if (error.message?.includes('Password should be at least')) {
           pwdError.value = '新密码强度不足';
         } else {
           pwdError.value = error.message || '修改密码失败';

@@ -5,33 +5,38 @@
         <!-- Logo 区域 -->
         <div class="login-logo">
           <div class="logo-icon">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
-              <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="2"
+                fill="none"
+              />
+              <path
+                d="M12 6v6l4 2"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
             </svg>
           </div>
           <h1>打卡</h1>
-          <p class="subtitle">{{ showRegister ? '创建新账户' : '登录你的账户' }}</p>
-        </div>
-
-        <!-- 标签切换 -->
-        <div class="tabs">
-          <button 
-            :class="['tab', { active: !showRegister }]" 
-            @click="showRegister = false"
-          >
-            登录
-          </button>
-          <button 
-            :class="['tab', { active: showRegister }]" 
-            @click="showRegister = true"
-          >
-            注册
-          </button>
+          <p class="subtitle">
+            登录你的账户
+          </p>
         </div>
 
         <!-- 登录表单 -->
-        <form v-if="!showRegister" @submit.prevent="handleLogin" class="auth-form">
+        <form
+          class="auth-form"
+          @submit.prevent="handleLogin"
+        >
           <div class="input-group">
             <label>邮箱</label>
             <input
@@ -40,50 +45,7 @@
               placeholder="your@email.com"
               required
               autocomplete="email"
-            />
-          </div>
-
-          <div class="input-group">
-            <label>密码</label>
-            <input
-              v-model="password"
-              type="password"
-              placeholder="输入密码"
-              required
-              autocomplete="current-password"
-            />
-          </div>
-
-          <div v-if="error" class="error-alert">
-            {{ error }}
-          </div>
-
-          <button type="submit" class="submit-btn" :disabled="loading">
-            <span v-if="loading" class="spinner"></span>
-            {{ loading ? '登录中...' : '登录' }}
-          </button>
-        </form>
-
-        <!-- 注册表单 -->
-        <form v-else @submit.prevent="handleRegister" class="auth-form">
-          <div class="input-group">
-            <label>姓名</label>
-            <input
-              v-model="name"
-              type="text"
-              placeholder="你的姓名"
-              required
-            />
-          </div>
-
-          <div class="input-group">
-            <label>邮箱</label>
-            <input
-              v-model="email"
-              type="email"
-              placeholder="your@email.com"
-              required
-            />
+            >
           </div>
 
           <div class="input-group">
@@ -94,16 +56,21 @@
               placeholder="至少6位"
               required
               minlength="6"
-            />
+            >
           </div>
 
-          <div v-if="error" class="error-alert">
+          <div
+            v-if="error"
+            class="error-alert"
+          >
             {{ error }}
           </div>
 
-          <button type="submit" class="submit-btn" :disabled="loading">
-            <span v-if="loading" class="spinner"></span>
-            {{ loading ? '创建账户中...' : '创建账户' }}
+          <button
+            class="btn btn-primary"
+            :disabled="loading"
+          >
+            登录
           </button>
         </form>
       </div>
@@ -112,82 +79,48 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { useUserStore } from '@/store/user'
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useUserStore } from '@/store/user';
 
 export default {
-  name: 'Login',
   setup() {
-    const router = useRouter()
-    const route = useRoute()
-    const userStore = useUserStore()
+    const email = ref('');
+    const password = ref('');
+    const loading = ref(false);
+    const error = ref('');
 
-    const email = ref('')
-    const password = ref('')
-    const name = ref('')
-    const loading = ref(false)
-    const error = ref('')
-    const showRegister = ref(false)
+    const router = useRouter();
+    const userStore = useUserStore();
 
     const handleLogin = async () => {
       if (!email.value || !password.value) {
-        error.value = '请填写完整信息'
-        return
+        error.value = '请填写完整信息';
+        return;
       }
 
       try {
-        loading.value = true
-        error.value = ''
-        await userStore.login(email.value, password.value)
-        
-        // 检查是否有重定向参数
-        const redirect = route.query.redirect
-        router.push(redirect || '/')
+        loading.value = true;
+        error.value = '';
+        await userStore.login(email.value, password.value);
+        router.push('/');
       } catch (err) {
-        console.error('登录失败:', err)
-        error.value = err.message || '登录失败,请检查邮箱和密码'
+        console.error('登录失败:', err);
+        error.value = err.message || '登录失败,请重试';
       } finally {
-        loading.value = false
+        loading.value = false;
       }
-    }
-
-    const handleRegister = async () => {
-      if (!email.value || !password.value || !name.value) {
-        error.value = '请填写完整信息'
-        return
-      }
-
-      if (password.value.length < 6) {
-        error.value = '密码至少需要6位'
-        return
-      }
-
-      try {
-        loading.value = true
-        error.value = ''
-        await userStore.register(email.value, password.value, name.value)
-        router.push('/')
-      } catch (err) {
-        console.error('注册失败:', err)
-        error.value = err.message || '注册失败,请重试'
-      } finally {
-        loading.value = false
-      }
-    }
+    };
 
     return {
       email,
       password,
-      name,
       loading,
       error,
-      showRegister,
-      handleLogin,
-      handleRegister
-    }
+      handleLogin
+    };
   }
-}
+};
 </script>
 
 <style scoped>
@@ -315,45 +248,6 @@ export default {
   color: var(--label-secondary);
 }
 
-/* 标签切换 */
-.tabs {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  background: var(--fill-tertiary);
-  border-radius: 10px;
-  padding: 2px;
-  margin-bottom: 28px;
-}
-
-.tab {
-  padding: 8px 16px;
-  border: none;
-  background: transparent;
-  color: var(--label-primary);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  border-radius: 8px;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
-}
-
-.tab.active {
-  background: var(--system-background);
-  box-shadow: 
-    0 1px 2px rgba(0, 0, 0, 0.08),
-    0 2px 8px rgba(0, 0, 0, 0.04);
-}
-
-.tab:not(.active):hover {
-  background: var(--fill-secondary);
-}
-
-.tab:not(.active):active {
-  transform: scale(0.98);
-}
-
 /* 表单样式 */
 .auth-form {
   display: flex;
@@ -419,7 +313,7 @@ export default {
 }
 
 /* 提交按钮 */
-.submit-btn {
+.btn-primary {
   width: 100%;
   padding: 14px 24px;
   margin-top: 8px;
@@ -441,7 +335,7 @@ export default {
   gap: 8px;
 }
 
-.submit-btn:hover:not(:disabled) {
+.btn-primary:hover:not(:disabled) {
   background: #0051d5;
   transform: translateY(-1px);
   box-shadow: 
@@ -449,14 +343,14 @@ export default {
     0 8px 20px rgba(0, 122, 255, 0.3);
 }
 
-.submit-btn:active:not(:disabled) {
+.btn-primary:active:not(:disabled) {
   transform: translateY(0);
   box-shadow: 
     0 1px 2px rgba(0, 0, 0, 0.08),
     0 4px 12px rgba(0, 122, 255, 0.2);
 }
 
-.submit-btn:disabled {
+.btn-primary:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
@@ -517,13 +411,13 @@ export default {
       0 8px 16px rgba(0, 0, 0, 0.4);
   }
   
-  .submit-btn {
+  .btn-primary {
     box-shadow: 
       0 1px 2px rgba(0, 0, 0, 0.3),
       0 4px 12px rgba(10, 132, 255, 0.4);
   }
   
-  .submit-btn:hover:not(:disabled) {
+  .btn-primary:hover:not(:disabled) {
     box-shadow: 
       0 2px 4px rgba(0, 0, 0, 0.4),
       0 8px 20px rgba(10, 132, 255, 0.5);

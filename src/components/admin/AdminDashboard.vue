@@ -13,9 +13,9 @@
         <AppleButton
           variant="primary"
           size="medium"
-          @click="refreshData"
           :disabled="loading"
           :loading="loading"
+          @click="refreshData"
         >
           刷新
         </AppleButton>
@@ -23,58 +23,102 @@
     </div>
 
     <div class="dashboard-stats">
-      <AppleCard class="stat-card" hoverable>
+      <AppleCard
+        class="stat-card"
+        hoverable
+      >
         <div class="stat-content">
           <div class="stat-icon users">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
             </svg>
           </div>
           <div class="stat-info">
-            <div class="stat-value">{{ stats.totalUsers }}</div>
-            <div class="stat-label">总用户数</div>
+            <div class="stat-value">
+              {{ stats.totalUsers }}
+            </div>
+            <div class="stat-label">
+              总用户数
+            </div>
           </div>
         </div>
       </AppleCard>
 
-      <AppleCard class="stat-card" hoverable>
+      <AppleCard
+        class="stat-card"
+        hoverable
+      >
         <div class="stat-content">
           <div class="stat-icon records">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
             </svg>
           </div>
           <div class="stat-info">
-            <div class="stat-value">{{ stats.totalRecords }}</div>
-            <div class="stat-label">总打卡记录</div>
+            <div class="stat-value">
+              {{ stats.totalRecords }}
+            </div>
+            <div class="stat-label">
+              总打卡记录
+            </div>
           </div>
         </div>
       </AppleCard>
 
-      <AppleCard class="stat-card" hoverable>
+      <AppleCard
+        class="stat-card"
+        hoverable
+      >
         <div class="stat-content">
           <div class="stat-icon today">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"/>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z" />
             </svg>
           </div>
           <div class="stat-info">
-            <div class="stat-value">{{ stats.todayRecords }}</div>
-            <div class="stat-label">今日上班打卡人数</div>
+            <div class="stat-value">
+              {{ stats.todayRecords }}
+            </div>
+            <div class="stat-label">
+              今日上班打卡人数
+            </div>
           </div>
         </div>
       </AppleCard>
 
-      <AppleCard class="stat-card" hoverable>
+      <AppleCard
+        class="stat-card"
+        hoverable
+      >
         <div class="stat-content">
           <div class="stat-icon pending">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3z"/>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3z" />
             </svg>
           </div>
           <div class="stat-info">
-            <div class="stat-value">{{ stats.pendingSync }}</div>
-            <div class="stat-label">待同步</div>
+            <div class="stat-value">
+              {{ stats.pendingSync }}
+            </div>
+            <div class="stat-label">
+              待同步
+            </div>
           </div>
         </div>
       </AppleCard>
@@ -84,9 +128,9 @@
       <button
         v-for="tab in tabs"
         :key="tab.id"
-        @click="activeTab = tab.id"
         class="tab-btn"
         :class="{ active: activeTab === tab.id }"
+        @click="activeTab = tab.id"
       >
         {{ tab.label }}
       </button>
@@ -98,14 +142,27 @@
       <DataAnalytics v-if="activeTab === 'analytics'" />
     </AppleCard>
 
-    <div v-if="loading" class="loading-overlay">
-      <AppleLoading size="large" text="加载中..." />
+    <div
+      v-if="loading"
+      class="loading-overlay"
+    >
+      <AppleLoading
+        size="large"
+        text="加载中..."
+      />
     </div>
 
     <!-- 清空确认对话框 -->
     <Teleport to="body">
-      <div v-if="showClearConfirm" class="modal-overlay" @click="showClearConfirm = false">
-        <AppleCard class="modal-card confirm-modal" @click.stop>
+      <div
+        v-if="showClearConfirm"
+        class="modal-overlay"
+        @click="showClearConfirm = false"
+      >
+        <AppleCard
+          class="modal-card confirm-modal"
+          @click.stop
+        >
           <div class="modal-header">
             <h3>确认清空所有记录</h3>
           </div>
@@ -125,15 +182,15 @@
           <div class="modal-actions">
             <AppleButton 
               variant="secondary" 
-              @click="showClearConfirm = false"
               :disabled="clearing"
+              @click="showClearConfirm = false"
             >
               取消
             </AppleButton>
             <AppleButton 
               variant="danger" 
-              @click="clearAllRecords"
               :disabled="clearing"
+              @click="clearAllRecords"
             >
               {{ clearing ? '清空中...' : '确认清空' }}
             </AppleButton>
@@ -145,25 +202,24 @@
     <!-- 成功提示 -->
     <AppleToast
       :visible="showSuccessToast"
-      @update:visible="showSuccessToast = $event"
       type="success"
       message="所有记录已成功清空"
+      @update:visible="showSuccessToast = $event"
     />
 
     <!-- 错误提示 -->
     <AppleToast
       :visible="showErrorToast"
-      @update:visible="showErrorToast = $event"
       type="error"
       :message="errorMessage"
+      @update:visible="showErrorToast = $event"
     />
   </div>
 </template>
 
 <script>
 import { ref, reactive, onMounted } from 'vue';
-import { collection, getDocs, query, where, deleteDoc, doc } from 'firebase/firestore';
-import { db } from '@/services/firebase';
+import { supabase } from '@/services/supabase';
 import { getDBStats, clearAllData } from '@/services/indexedDB';
 import AppleButton from '@/components/shared/AppleButton.vue';
 import AppleCard from '@/components/shared/AppleCard.vue';
@@ -213,28 +269,36 @@ export default {
 
       try {
         // 获取用户统计
-        const usersSnapshot = await getDocs(collection(db, 'users'));
-        stats.totalUsers = usersSnapshot.size;
+        const { count: userCount, error: userError } = await supabase
+          .from('users')
+          .select('*', { count: 'exact', head: true });
+
+        if (userError) throw userError;
+        stats.totalUsers = userCount || 0;
 
         // 获取记录统计
-        const recordsSnapshot = await getDocs(collection(db, 'punchRecords'));
-        stats.totalRecords = recordsSnapshot.size;
+        const { count: recordCount, error: recordError } = await supabase
+          .from('punch_records')
+          .select('*', { count: 'exact', head: true });
+
+        if (recordError) throw recordError;
+        stats.totalRecords = recordCount || 0;
 
         // 获取今日上班打卡人数（去重）
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        const todayQuery = query(
-          collection(db, 'punchRecords'),
-          where('timestamp', '>=', today.toISOString())
-        );
-        const todaySnapshot = await getDocs(todayQuery);
-        
+        const { data: todayRecords, error: todayError } = await supabase
+          .from('punch_records')
+          .select('user_id, type')
+          .gte('timestamp', today.toISOString());
+
+        if (todayError) throw todayError;
+
         // 只统计上班打卡的不同用户
         const todayPunchInUsers = new Set();
-        todaySnapshot.docs.forEach(doc => {
-          const data = doc.data();
-          if (data.type === 'in') {
-            todayPunchInUsers.add(data.userId);
+        todayRecords.forEach(record => {
+          if (record.type === 'in') {
+            todayPunchInUsers.add(record.user_id);
           }
         });
         stats.todayRecords = todayPunchInUsers.size;
@@ -258,12 +322,13 @@ export default {
       clearing.value = true;
       
       try {
-        // 1. 清空 Firebase 中的所有打卡记录
-        const recordsSnapshot = await getDocs(collection(db, 'punchRecords'));
-        const deletePromises = recordsSnapshot.docs.map(document => 
-          deleteDoc(doc(db, 'punchRecords', document.id))
-        );
-        await Promise.all(deletePromises);
+        // 1. 清空 Supabase 中的所有打卡记录
+        const { error: deleteError } = await supabase
+          .from('punch_records')
+          .delete()
+          .neq('id', '00000000-0000-0000-0000-000000000000'); // 删除所有记录
+
+        if (deleteError) throw deleteError;
 
         // 2. 清空本地 IndexedDB
         await clearAllData();

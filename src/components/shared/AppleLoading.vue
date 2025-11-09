@@ -4,16 +4,21 @@
 <template>
   <div :class="['apple-loading', size]">
     <div class="loading-spinner">
-      <div class="spinner-ring"></div>
-      <div class="spinner-ring"></div>
-      <div class="spinner-ring"></div>
-      <div class="spinner-ring"></div>
-      <div class="spinner-ring"></div>
-      <div class="spinner-ring"></div>
-      <div class="spinner-ring"></div>
-      <div class="spinner-ring"></div>
+      <div class="spinner-ring" />
+      <div class="spinner-ring" />
+      <div class="spinner-ring" />
+      <div class="spinner-ring" />
+      <div class="spinner-ring" />
+      <div class="spinner-ring" />
+      <div class="spinner-ring" />
+      <div class="spinner-ring" />
     </div>
-    <p v-if="text" class="loading-text">{{ text }}</p>
+    <p
+      v-if="text"
+      class="loading-text"
+    >
+      {{ text }}
+    </p>
   </div>
 </template>
 

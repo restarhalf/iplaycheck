@@ -4,33 +4,100 @@
 <template>
   <Teleport to="body">
     <Transition name="toast">
-      <div v-if="visible" :class="['apple-toast', type]" @click="hide">
+      <div
+        v-if="visible"
+        :class="['apple-toast', type]"
+        @click="hide"
+      >
         <div class="toast-icon">
-          <svg v-if="type === 'success'" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-            <path d="M8 12l3 3 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <svg
+            v-if="type === 'success'"
+            viewBox="0 0 24 24"
+            fill="none"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="2"
+            />
+            <path
+              d="M8 12l3 3 5-5"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
           </svg>
-          <svg v-else-if="type === 'error'" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-            <path d="M15 9l-6 6M9 9l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <svg
+            v-else-if="type === 'error'"
+            viewBox="0 0 24 24"
+            fill="none"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="2"
+            />
+            <path
+              d="M15 9l-6 6M9 9l6 6"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
           </svg>
-          <svg v-else-if="type === 'warning'" viewBox="0 0 24 24" fill="none">
-            <path d="M12 2L2 20h20L12 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M12 9v4M12 17h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <svg
+            v-else-if="type === 'warning'"
+            viewBox="0 0 24 24"
+            fill="none"
+          >
+            <path
+              d="M12 2L2 20h20L12 2z"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M12 9v4M12 17h.01"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
           </svg>
-          <svg v-else viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-            <path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <svg
+            v-else
+            viewBox="0 0 24 24"
+            fill="none"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="2"
+            />
+            <path
+              d="M12 8v4M12 16h.01"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
           </svg>
         </div>
-        <div class="toast-message">{{ message }}</div>
+        <div class="toast-message">
+          {{ message }}
+        </div>
       </div>
     </Transition>
   </Teleport>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { watch } from 'vue'
 
 const props = defineProps({
   message: {

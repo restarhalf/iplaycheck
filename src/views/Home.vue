@@ -4,7 +4,9 @@
     <div class="welcome-section">
       <div class="welcome-content">
         <h1>欢迎回来</h1>
-        <p class="user-name">{{ userName }}</p>
+        <p class="user-name">
+          {{ userName }}
+        </p>
       </div>
     </div>
 
@@ -23,8 +25,17 @@
           <p>{{ action.description }}</p>
         </div>
         <div class="card-arrow">
-          <svg viewBox="0 0 24 24" fill="none">
-            <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+          >
+            <path
+              d="M9 18l6-6-6-6"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
           </svg>
         </div>
       </AppleCard>
@@ -38,7 +49,7 @@
           <div class="status-item">
             <span class="status-label">网络</span>
             <div class="status-value">
-              <span :class="['status-dot', isOnline ? 'online' : 'offline']"></span>
+              <span :class="['status-dot', isOnline ? 'online' : 'offline']" />
               <span>{{ isOnline ? '在线' : '离线' }}</span>
             </div>
           </div>
@@ -60,12 +71,10 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
 import { useUserStore } from '@/store/user'
 import { usePunchStore } from '@/store/punch'
 import AppleCard from '@/components/shared/AppleCard.vue'
 
-const router = useRouter()
 const userStore = useUserStore()
 const punchStore = usePunchStore()
 

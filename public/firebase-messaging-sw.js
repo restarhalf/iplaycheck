@@ -1,37 +1,26 @@
-// Firebase Cloud Messaging Service Worker
+// Web Push API Service Worker for Supabase
 
-importScripts('https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/10.4.0/firebase-messaging-compat.js');
+// 处理推送消息
+self.addEventListener('push', (event) => {
+  console.log('Received push message:', event);
 
-// 从环境变量获取Firebase配置
-const firebaseConfig = {
-  apiKey: 'your_api_key_here',
-  authDomain: 'your_project_id.firebaseapp.com',
-  projectId: 'your_project_id',
-  storageBucket: 'your_project_id.appspot.com',
-  messagingSenderId: 'your_sender_id',
-  appId: 'your_app_id'
-};
+  let data = {};
+  if (event.data) {
+    data = event.data.json();
+  }
 
-firebase.initializeApp(firebaseConfig);
-
-const messaging = firebase.messaging();
-
-// 处理后台消息
-messaging.onBackgroundMessage((payload) => {
-  console.log('Received background message ', payload);
-
-  const notificationTitle = payload.notification.title || '打卡系统通知';
-  const notificationOptions = {
-    body: payload.notification.body || '您有新的消息',
+  const options = {
+    body: data.body || '您有新的消息',
     icon: '/img/icons/android-chrome-192x192.png',
     badge: '/img/icons/badge-72x72.png',
     tag: 'time-tracking-notification',
     requireInteraction: false,
-    data: payload.data
+    data: data
   };
 
-  return self.registration.showNotification(notificationTitle, notificationOptions);
+  event.waitUntil(
+    self.registration.showNotification(data.title || '打卡系统通知', options)
+  );
 });
 
 // 处理通知点击
@@ -43,7 +32,7 @@ self.addEventListener('notificationclick', (event) => {
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
       // 如果已有打开的窗口,聚焦到该窗口
       for (const client of clientList) {
-        if (client.url === '/' && 'focus' in client) {
+        if (client.url.includes('/') && 'focus' in client) {
           return client.focus();
         }
       }
@@ -53,4 +42,16 @@ self.addEventListener('notificationclick', (event) => {
       }
     })
   );
+});
+
+// 处理service worker安装
+self.addEventListener('install', (event) => {
+  console.log('Service Worker installing.');
+  self.skipWaiting();
+});
+
+// 处理service worker激活
+self.addEventListener('activate', (event) => {
+  console.log('Service Worker activating.');
+  event.waitUntil(clients.claim());
 });

@@ -1,6 +1,6 @@
 // Firebase配置和初始化 (Spark Plan - 不使用Storage)
 import { initializeApp } from 'firebase/app';
-import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from 'firebase/firestore';
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 

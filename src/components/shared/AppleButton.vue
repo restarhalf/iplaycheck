@@ -16,7 +16,10 @@
     :disabled="disabled || loading"
     @click="handleClick"
   >
-    <span v-if="loading" class="spinner"></span>
+    <span
+      v-if="loading"
+      class="spinner"
+    />
     <slot v-else />
   </button>
 </template>

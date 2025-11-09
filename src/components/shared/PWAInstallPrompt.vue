@@ -1,17 +1,36 @@
 <template>
   <transition name="slide-up">
-    <div v-if="showPrompt" class="install-prompt">
+    <div
+      v-if="showPrompt"
+      class="install-prompt"
+    >
       <div class="prompt-card">
         <div class="prompt-icon">
-          <svg viewBox="0 0 24 24" fill="none">
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/>
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+          >
+            <path
+              d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+              fill="currentColor"
+            />
           </svg>
         </div>
         <h3>安装应用</h3>
         <p>将工作室打卡安装到您的设备，享受更好的体验和离线功能。</p>
         <div class="prompt-actions">
-          <button class="btn-secondary" @click="dismiss">稍后</button>
-          <button class="btn-primary" @click="install">安装</button>
+          <button
+            class="btn-secondary"
+            @click="dismiss"
+          >
+            稍后
+          </button>
+          <button
+            class="btn-primary"
+            @click="install"
+          >
+            安装
+          </button>
         </div>
       </div>
     </div>

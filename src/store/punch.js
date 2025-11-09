@@ -162,6 +162,9 @@ export const usePunchStore = defineStore('punch', {
         
         this.records = uniqueRecords;
 
+        // 验证从数据库加载的打卡记录是否正确
+        console.log('Loaded punch records:', this.records);
+
         // 更新今日记录
         this.updateTodayRecords();
 

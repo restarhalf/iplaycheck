@@ -2,9 +2,16 @@
   <div class="data-analytics">
     <div class="analytics-header">
       <h2>数据分析</h2>
-      <button class="refresh-btn" @click="loadAnalytics" :disabled="loading">
+      <button
+        class="refresh-btn"
+        :disabled="loading"
+        @click="loadAnalytics"
+      >
         <span v-if="!loading">🔄</span>
-        <span v-else class="spinner">⏳</span>
+        <span
+          v-else
+          class="spinner"
+        >⏳</span>
         刷新数据
       </button>
     </div>
@@ -12,7 +19,10 @@
     <div class="analytics-grid">
       <!-- 今日统计 -->
       <div class="stat-card">
-        <div class="card-icon" style="background: linear-gradient(135deg, #007aff 0%, #0051d5 100%);">
+        <div
+          class="card-icon"
+          style="background: linear-gradient(135deg, #007aff 0%, #0051d5 100%);"
+        >
           📊
         </div>
         <div class="card-content">
@@ -36,7 +46,10 @@
 
       <!-- 本周统计 -->
       <div class="stat-card">
-        <div class="card-icon" style="background: linear-gradient(135deg, #34c759 0%, #30b350 100%);">
+        <div
+          class="card-icon"
+          style="background: linear-gradient(135deg, #34c759 0%, #30b350 100%);"
+        >
           📈
         </div>
         <div class="card-content">
@@ -62,19 +75,27 @@
       <div class="chart-card full-width">
         <h3>今日用户工作时长</h3>
         <div class="user-work-hours">
-          <div class="user-item" v-for="(user, index) in userWorkHours" :key="user.userId">
-            <div class="user-rank" :class="'rank-' + (index + 1)">
+          <div
+            v-for="(user, index) in userWorkHours"
+            :key="user.userId"
+            class="user-item"
+          >
+            <div
+              class="user-rank"
+              :class="'rank-' + (index + 1)"
+            >
               {{ index + 1 }}
             </div>
             <div class="user-info">
               <span class="user-name">{{ user.userName || user.userEmail || '未知用户' }}</span>
               <div class="work-time-bar">
-                <div class="work-time-fill" 
-                     :style="{ 
-                       width: (user.hours / 12 * 100) + '%',
-                       background: getWorkHoursColor(user.hours)
-                     }">
-                </div>
+                <div
+                  class="work-time-fill" 
+                  :style="{ 
+                    width: (user.hours / 12 * 100) + '%',
+                    background: getWorkHoursColor(user.hours)
+                  }"
+                />
               </div>
             </div>
             <div class="user-hours">
@@ -82,7 +103,10 @@
               <span class="hours-unit">小时</span>
             </div>
           </div>
-          <div v-if="userWorkHours.length === 0" class="empty-state">
+          <div
+            v-if="userWorkHours.length === 0"
+            class="empty-state"
+          >
             <span>今日暂无打卡记录</span>
           </div>
         </div>
@@ -92,17 +116,23 @@
       <div class="chart-card full-width">
         <h3>本周打卡类型分布</h3>
         <div class="type-distribution">
-          <div class="type-item" v-for="item in typeDistribution" :key="item.type">
+          <div
+            v-for="item in typeDistribution"
+            :key="item.type"
+            class="type-item"
+          >
             <div class="type-header">
               <span class="type-label">{{ item.label }}</span>
               <span class="type-count">{{ item.count }} 次</span>
             </div>
             <div class="progress-bar">
-              <div class="progress-fill" 
-                   :style="{ 
-                     width: item.percentage + '%',
-                     background: item.color 
-                   }">
+              <div
+                class="progress-fill" 
+                :style="{ 
+                  width: item.percentage + '%',
+                  background: item.color 
+                }"
+              >
                 <span class="percentage">{{ item.percentage }}%</span>
               </div>
             </div>
@@ -115,14 +145,25 @@
         <h3>过去7天工作时长</h3>
         <div class="trend-chart">
           <div class="chart-bars">
-            <div class="chart-bar" v-for="day in weeklyTrend" :key="day.date">
-              <div class="bar-fill" :style="{ height: (day.hours / 12 * 100) + '%' }">
+            <div
+              v-for="day in weeklyTrend"
+              :key="day.date"
+              class="chart-bar"
+            >
+              <div
+                class="bar-fill"
+                :style="{ height: (day.hours / 12 * 100) + '%' }"
+              >
                 <span class="bar-label">{{ day.hours }}h</span>
               </div>
             </div>
           </div>
           <div class="chart-labels">
-            <span class="day-label" v-for="day in weeklyTrend" :key="day.date">
+            <span
+              v-for="day in weeklyTrend"
+              :key="day.date"
+              class="day-label"
+            >
               {{ day.label }}
             </span>
           </div>
@@ -134,8 +175,7 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
-import { collection, getDocs, query, where } from 'firebase/firestore';
-import { db } from '@/services/firebase';
+import { supabase } from '@/services/supabase';
 
 const loading = ref(false);
 const usersMap = ref(new Map()); // 用户映射表
@@ -166,21 +206,20 @@ const getWorkHoursColor = (hours) => {
 // 加载用户数据
 const loadUsers = async () => {
   try {
-    const usersSnapshot = await getDocs(collection(db, 'users'));
+    const { data, error } = await supabase
+      .from('users')
+      .select('*');
+
+    if (error) throw error;
+
     const map = new Map();
-    usersSnapshot.docs.forEach(doc => {
-      map.set(doc.id, doc.data());
+    data.forEach(user => {
+      map.set(user.id, user);
     });
     usersMap.value = map;
   } catch (error) {
     console.error('Load users error:', error);
   }
-};
-
-// 获取用户名称
-const getUserName = (userId) => {
-  const user = usersMap.value.get(userId);
-  return user?.name || user?.email || userId;
 };
 
 const loadAnalytics = async () => {
@@ -192,13 +231,12 @@ const loadAnalytics = async () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const todayQuery = query(
-      collection(db, 'punchRecords'),
-      where('timestamp', '>=', today.toISOString())
-    );
-    const todaySnapshot = await getDocs(todayQuery);
+    const { data: todayRecords, error: todayError } = await supabase
+      .from('punch_records')
+      .select('*')
+      .gte('timestamp', today.toISOString());
 
-    const todayRecords = todaySnapshot.docs.map(doc => doc.data());
+    if (todayError) throw todayError;
     
     // 只统计上班打卡的人数（去重）
     const punchInRecords = todayRecords.filter(r => r.type === 'in');
@@ -219,12 +257,12 @@ const loadAnalytics = async () => {
     weekAgo.setDate(weekAgo.getDate() - 7);
     weekAgo.setHours(0, 0, 0, 0);
 
-    const weekQuery = query(
-      collection(db, 'punchRecords'),
-      where('timestamp', '>=', weekAgo.toISOString())
-    );
-    const weekSnapshot = await getDocs(weekQuery);
-    const weekRecords = weekSnapshot.docs.map(doc => doc.data());
+    const { data: weekRecords, error: weekError } = await supabase
+      .from('punch_records')
+      .select('*')
+      .gte('timestamp', weekAgo.toISOString());
+
+    if (weekError) throw weekError;
 
     const activeUsersSet = new Set(weekRecords.map(r => r.userId));
     weekStats.activeUsers = activeUsersSet.size;
@@ -319,46 +357,6 @@ const calculateWorkHoursData = (records) => {
     avgHours: uniqueUsers > 0 ? (totalHours / uniqueUsers).toFixed(1) : 0,
     totalHours: totalHours.toFixed(1)
   };
-};
-
-const calculateAvgWorkHours = (records) => {
-  if (records.length === 0) return 0;
-  
-  // 计算实际工作时长（扣除休息时间）
-  const userWorkHours = {};
-  records.forEach(record => {
-    if (!userWorkHours[record.userId]) {
-      userWorkHours[record.userId] = { 
-        in: null, 
-        breakStart: null,
-        breakTotal: 0,
-        total: 0 
-      };
-    }
-    
-    const userData = userWorkHours[record.userId];
-    
-    if (record.type === 'in') {
-      userData.in = new Date(record.timestamp);
-      userData.breakTotal = 0; // 重置休息时间
-    } else if (record.type === 'break_start') {
-      userData.breakStart = new Date(record.timestamp);
-    } else if (record.type === 'break_end' && userData.breakStart) {
-      const breakDuration = (new Date(record.timestamp) - userData.breakStart) / (1000 * 60 * 60);
-      userData.breakTotal += breakDuration;
-      userData.breakStart = null;
-    } else if (record.type === 'out' && userData.in) {
-      const workDuration = (new Date(record.timestamp) - userData.in) / (1000 * 60 * 60);
-      userData.total += Math.max(0, workDuration - userData.breakTotal); // 扣除休息时间
-      userData.in = null;
-      userData.breakTotal = 0;
-    }
-  });
-  
-  const totalHours = Object.values(userWorkHours).reduce((sum, user) => sum + user.total, 0);
-  const uniqueUsers = Object.keys(userWorkHours).length;
-  
-  return uniqueUsers > 0 ? (totalHours / uniqueUsers).toFixed(1) : 0;
 };
 
 const calculateUserWorkHours = (records) => {

@@ -1,24 +1,13 @@
 // 数据同步服务 (使用ImgBB图片存储)
-import { 
-  collection, 
-  doc, 
-  addDoc, 
-  updateDoc, 
-  getDocs, 
-  query, 
-  where,
-  orderBy,
-  limit,
-  serverTimestamp 
-} from 'firebase/firestore';
-import { db } from './firebase';
+import { supabase } from './supabase';
 import { uploadImageToImgBB } from './imgbb';
 import { 
   getUnsyncedRecords, 
   markRecordAsSynced,
   getSyncQueue,
   removeFromSyncQueue,
-  addPunchRecord 
+  addPunchRecord,
+  updatePunchRecord
 } from './indexedDB';
 
 export class SyncService {
@@ -67,11 +56,31 @@ export class SyncService {
     this.notifyListeners('sync_started');
 
     try {
+      // 获取当前用户信息
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (authError || !user) {
+        console.error('User not authenticated, skipping sync');
+        return;
+      }
+
+      // 检查用户角色
+      const { data: userProfile, error: profileError } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+      const isAdmin = userProfile?.role === 'admin';
+
       // 上传未同步的记录
       await this.uploadUnsyncedRecords();
 
-      // 下载新记录
-      await this.downloadNewRecords();
+      // 下载新记录：管理员下载所有记录，普通用户只下载自己的
+      if (isAdmin) {
+        await this.downloadNewRecords(); // 不传userId，下载所有记录
+      } else {
+        await this.downloadNewRecords(user.id);
+      }
 
       // 处理同步队列
       await this.processSyncQueue();
@@ -89,8 +98,44 @@ export class SyncService {
   async uploadUnsyncedRecords() {
     const unsyncedRecords = await getUnsyncedRecords();
 
+    if (unsyncedRecords.length === 0) {
+      console.log('No unsynced records to upload');
+      return;
+    }
+
+    // 检查认证状态
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      console.error('User not authenticated, skipping upload');
+      return;
+    }
+
+    // 检查用户角色
+    const { data: userProfile, error: profileError } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    const isAdmin = userProfile?.role === 'admin';
+
+    console.log(`Uploading ${unsyncedRecords.length} unsynced records${isAdmin ? ' (admin mode)' : ''} for user ${user.id}`);
+
     for (const record of unsyncedRecords) {
       try {
+        // 验证记录所有权：管理员可以上传所有记录，普通用户只能上传自己的
+        if (!isAdmin && record.userId !== user.id) {
+          if (record.userId === null) {
+            // 修复旧记录中缺失的userId
+            console.log(`Fixing record ${record.id}: setting userId to ${user.id}`);
+            record.userId = user.id;
+            // 更新IndexedDB中的记录
+            await updatePunchRecord(record);
+          } else {
+            console.warn(`Skipping record ${record.id}: userId mismatch (${record.userId} != ${user.id})`);
+            continue;
+          }
+        }
         // 上传照片到ImgBB
         let photoURL = record.photo;
         if (record.photo && record.photo.startsWith('data:')) {
@@ -109,13 +154,28 @@ export class SyncService {
         const uploadData = {
           ...record,
           photo: photoURL,
-          syncedAt: serverTimestamp()
+          synced_at: new Date().toISOString()
         };
 
-        delete uploadData.id; // Firestore会生成新的ID
+        delete uploadData.id; // Supabase会生成新的ID
 
-        // 上传到Firestore
-        const docRef = await addDoc(collection(db, 'punchRecords'), uploadData);
+        // 上传到Supabase
+        console.log('Inserting record:', uploadData);
+        const { error } = await supabase
+          .from('punch_records')
+          .insert([{
+            user_id: uploadData.userId, // 修复字段名：userId -> user_id
+            type: uploadData.type,
+            timestamp: uploadData.timestamp,
+            photo: uploadData.photo,
+            location: uploadData.location,
+            synced_at: uploadData.synced_at
+          }]);
+
+        if (error) {
+          console.error('Failed to upload record:', error);
+          throw error;
+        }
 
         // 标记为已同步
         await markRecordAsSynced(record.id);
@@ -142,30 +202,38 @@ export class SyncService {
   // 下载新记录
   async downloadNewRecords(userId = null) {
     try {
-      let q = collection(db, 'punchRecords');
+      let query = supabase
+        .from('punch_records')
+        .select('*')
+        .order('timestamp', { ascending: false });
 
       if (userId) {
-        q = query(
-          collection(db, 'punchRecords'),
-          where('userId', '==', userId),
-          orderBy('timestamp', 'desc'),
-          limit(50)
-        );
+        query = query.eq('user_id', userId).limit(50);
       }
 
-      const querySnapshot = await getDocs(q);
-      const records = [];
+      const { data: records, error } = await query;
 
-      querySnapshot.forEach((doc) => {
-        records.push({
-          id: doc.id,
-          ...doc.data(),
-          synced: true
-        });
-      });
+      if (error) {
+        console.error('Failed to download records:', error);
+        throw error;
+      }
+
+      console.log('Downloaded records:', records);
+
+      // 处理记录格式
+      const processedRecords = records.map(record => ({
+        id: record.id,
+        userId: record.user_id, // 转换为camelCase
+        type: record.type,
+        timestamp: record.timestamp,
+        photo: record.photo,
+        location: record.location,
+        synced_at: record.synced_at,
+        synced: true
+      }));
 
       // 保存到IndexedDB
-      for (const record of records) {
+      for (const record of processedRecords) {
         try {
           await addPunchRecord(record);
         } catch (error) {
@@ -174,7 +242,7 @@ export class SyncService {
         }
       }
 
-      return records;
+      return processedRecords;
     } catch (error) {
       console.error('Download records error:', error);
       throw error;
@@ -210,14 +278,22 @@ export class SyncService {
 
   // 更新远程记录
   async updateRemoteRecord(data) {
-    const docRef = doc(db, 'punchRecords', data.id);
-    return await updateDoc(docRef, data);
+    const { error } = await supabase
+      .from('punch_records')
+      .update(data)
+      .eq('id', data.id);
+
+    if (error) throw error;
   }
 
   // 删除远程记录
   async deleteRemoteRecord(data) {
-    // 实现删除逻辑
-    console.log('Delete not implemented:', data);
+    const { error } = await supabase
+      .from('punch_records')
+      .delete()
+      .eq('id', data.id);
+
+    if (error) throw error;
   }
 
   // 添加同步监听器

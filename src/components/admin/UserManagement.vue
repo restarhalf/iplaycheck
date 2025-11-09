@@ -23,16 +23,22 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="user in users" :key="user.id">
+          <tr
+            v-for="user in users"
+            :key="user.id"
+          >
             <td>{{ user.id }}</td>
             <td>{{ user.name }}</td>
             <td>{{ user.email }}</td>
             <td>
-              <span class="role-badge" :class="`role-${user.role}`">
+              <span
+                class="role-badge"
+                :class="`role-${user.role}`"
+              >
                 {{ getRoleName(user.role) }}
               </span>
             </td>
-            <td>{{ formatDate(user.createdAt) }}</td>
+            <td>{{ formatDate(user.created_at) }}</td>
             <td class="action-cell">
               <AppleButton
                 variant="secondary"
@@ -41,40 +47,6 @@
               >
                 编辑
               </AppleButton>
-              <AppleButton
-                variant="tertiary"
-                size="small"
-                @click="openChangePwd(user)"
-              >
-                修改密码
-              </AppleButton>
-              <AppleButton
-                variant="danger"
-                size="small"
-                @click="deleteUser(user)"
-              >
-                删除
-              </AppleButton>
-    <!-- 修改密码对话框 -->
-    <Teleport to="body">
-      <div v-if="showChangePwdModal" class="modal-overlay" @click.self="closePwdModal">
-        <AppleCard class="modal-content">
-          <h3>修改密码</h3>
-          <form @submit.prevent="changePassword">
-            <div class="form-group">
-              <label>新密码</label>
-              <input v-model="newPassword" type="password" required minlength="6" />
-            </div>
-            <div class="form-actions">
-              <AppleButton variant="primary" type="submit">保存</AppleButton>
-              <AppleButton variant="secondary" type="button" @click="closePwdModal">取消</AppleButton>
-            </div>
-            <div v-if="pwdError" class="error-msg">{{ pwdError }}</div>
-            <div v-if="pwdSuccess" class="success-msg">{{ pwdSuccess }}</div>
-          </form>
-        </AppleCard>
-      </div>
-    </Teleport>
             </td>
           </tr>
         </tbody>
@@ -83,32 +55,69 @@
 
     <!-- 添加/编辑用户对话框 -->
     <Teleport to="body">
-      <div v-if="showAddUserModal || showEditUserModal" class="modal-overlay" @click.self="closeModals">
+      <div
+        v-if="showAddUserModal || showEditUserModal"
+        class="modal-overlay"
+        @click.self="closeModals"
+      >
         <AppleCard class="modal-content">
           <h3>{{ showEditUserModal ? '编辑用户' : '添加用户' }}</h3>
           <form @submit.prevent="saveUser">
             <div class="form-group">
               <label>姓名</label>
-              <input v-model="userForm.name" type="text" required />
+              <input
+                v-model="userForm.name"
+                type="text"
+                required
+              >
             </div>
             <div class="form-group">
               <label>邮箱</label>
-              <input v-model="userForm.email" type="email" required />
+              <input
+                v-model="userForm.email"
+                type="email"
+                required
+              >
             </div>
-            <div class="form-group" v-if="!showEditUserModal">
+            <div
+              v-if="!showEditUserModal"
+              class="form-group"
+            >
               <label>密码</label>
-              <input v-model="userForm.password" type="password" required />
+              <input
+                v-model="userForm.password"
+                type="password"
+                required
+              >
             </div>
             <div class="form-group">
               <label>角色</label>
-              <select v-model="userForm.role" required>
-                <option value="user">普通用户</option>
-                <option value="admin">管理员</option>
+              <select
+                v-model="userForm.role"
+                required
+              >
+                <option value="user">
+                  普通用户
+                </option>
+                <option value="admin">
+                  管理员
+                </option>
               </select>
             </div>
             <div class="form-actions">
-              <AppleButton variant="primary" type="submit">保存</AppleButton>
-              <AppleButton variant="secondary" type="button" @click="closeModals">取消</AppleButton>
+              <AppleButton
+                variant="primary"
+                type="submit"
+              >
+                保存
+              </AppleButton>
+              <AppleButton
+                variant="secondary"
+                type="button"
+                @click="closeModals"
+              >
+                取消
+              </AppleButton>
             </div>
           </form>
         </AppleCard>
@@ -119,9 +128,7 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import { collection, getDocs, doc, setDoc, deleteDoc } from 'firebase/firestore';
-import { createUserWithEmailAndPassword, updatePassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { db, auth } from '@/services/firebase';
+import { supabase } from '@/services/supabase';
 import AppleButton from '@/components/shared/AppleButton.vue';
 import AppleCard from '@/components/shared/AppleCard.vue';
 
@@ -144,54 +151,15 @@ export default {
       role: 'user'
     });
   const editingUserId = ref(null);
-  const showChangePwdModal = ref(false);
-  const changePwdUser = ref(null);
-  const newPassword = ref('');
-  const pwdError = ref('');
-  const pwdSuccess = ref('');
-    const openChangePwd = (user) => {
-      changePwdUser.value = user;
-      newPassword.value = '';
-      pwdError.value = '';
-      pwdSuccess.value = '';
-      showChangePwdModal.value = true;
-    };
-
-    const closePwdModal = () => {
-      showChangePwdModal.value = false;
-      changePwdUser.value = null;
-      newPassword.value = '';
-      pwdError.value = '';
-      pwdSuccess.value = '';
-    };
-
-    // 管理员修改用户密码（需先用该用户账号登录一次）
-    const changePassword = async () => {
-      pwdError.value = '';
-      pwdSuccess.value = '';
-      try {
-        if (!changePwdUser.value?.email) {
-          pwdError.value = '无效用户';
-          return;
-        }
-        // 管理员用用户邮箱和临时密码登录
-        const tempPwd = 'Temp1234!'; // 可改为随机生成
-        const userCredential = await signInWithEmailAndPassword(auth, changePwdUser.value.email, tempPwd);
-        await updatePassword(userCredential.user, newPassword.value);
-        pwdSuccess.value = '密码修改成功';
-        setTimeout(closePwdModal, 1500);
-      } catch (err) {
-        pwdError.value = err.message || '修改失败';
-      }
-    };
-
     const loadUsers = async () => {
       try {
-        const snapshot = await getDocs(collection(db, 'users'));
-        users.value = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
+        const { data, error } = await supabase
+          .from('users')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        users.value = data || [];
       } catch (error) {
         console.error('Load users error:', error);
       }
@@ -202,7 +170,9 @@ export default {
     };
 
     const formatDate = (timestamp) => {
-      return new Date(timestamp).toLocaleDateString('zh-CN');
+      if (!timestamp) return '未知时间';
+      const date = new Date(timestamp);
+      return isNaN(date.getTime()) ? '无效时间' : date.toLocaleDateString('zh-CN');
     };
 
     const editUser = (user) => {
@@ -215,48 +185,100 @@ export default {
       showEditUserModal.value = true;
     };
 
-    const deleteUser = async (user) => {
-      if (confirm(`确定要删除用户 ${user.name} 吗?`)) {
-        try {
-          await deleteDoc(doc(db, 'users', user.id));
-          await loadUsers();
-        } catch (error) {
-          console.error('Delete user error:', error);
-          alert('删除失败');
-        }
-      }
-    };
-
     const saveUser = async () => {
       try {
         if (showEditUserModal.value) {
           // 更新用户
-          await setDoc(doc(db, 'users', editingUserId.value), {
-            name: userForm.value.name,
-            email: userForm.value.email,
-            role: userForm.value.role
-          }, { merge: true });
-        } else {
-          // 创建新用户
-          const userCredential = await createUserWithEmailAndPassword(
-            auth,
-            userForm.value.email,
-            userForm.value.password
-          );
+          const { error } = await supabase
+            .from('users')
+            .update({
+              name: userForm.value.name,
+              email: userForm.value.email,
+              role: userForm.value.role
+            })
+            .eq('id', editingUserId.value);
 
-          await setDoc(doc(db, 'users', userCredential.user.uid), {
-            name: userForm.value.name,
+          if (error) {
+            console.error('Update user error:', error);
+            throw new Error('更新用户失败，请检查输入信息');
+          }
+        } else {
+          // 创建新用户 - 管理员操作
+          console.log('Admin creating new user:', userForm.value);
+
+          // 首先检查当前用户是否是管理员
+          const currentUser = await supabase.auth.getUser();
+          if (!currentUser.data?.user) {
+            throw new Error('请先登录');
+          }
+
+          // 检查管理员权限（通过查询用户表）
+          const { data: adminCheck, error: adminError } = await supabase
+            .from('users')
+            .select('role')
+            .eq('id', currentUser.data.user.id)
+            .single();
+
+          if (adminError || adminCheck?.role !== 'admin') {
+            throw new Error('只有管理员可以添加用户');
+          }
+
+          // 创建认证用户 - 直接确认，无需邮箱验证
+          const { data, error } = await supabase.auth.signUp({
             email: userForm.value.email,
-            role: userForm.value.role,
-            createdAt: new Date().toISOString()
+            password: userForm.value.password,
+            options: {
+              data: {
+                name: userForm.value.name,
+                role: userForm.value.role
+              }
+            }
           });
+
+          if (error) {
+            console.error('Sign up error:', error);
+            throw new Error('创建用户失败，请检查邮箱是否已存在');
+          }
+
+          if (data?.user?.id) {
+            // 管理员直接创建用户资料到users表
+            const { error: profileError } = await supabase
+              .from('users')
+              .insert({
+                id: data.user.id,
+                name: userForm.value.name,
+                email: userForm.value.email,
+                role: userForm.value.role,
+                created_at: new Date().toISOString()
+              });
+
+            if (profileError) {
+              console.error('Profile creation error:', profileError);
+              // 注意：无法在客户端删除认证用户，需要手动清理
+              throw new Error('用户资料创建失败，但认证账户已创建。请联系技术支持清理。');
+            }
+
+            alert(`用户 ${userForm.value.name} 已成功创建！用户可以使用邮箱 ${userForm.value.email} 和设置的密码登录。`);
+
+            // 清理表单
+            userForm.value = {
+              name: '',
+              email: '',
+              password: '',
+              role: 'user'
+            };
+          } else {
+            console.error('Sign-up succeeded but user ID is missing:', data);
+            throw new Error('用户创建失败，请稍后重试');
+          }
         }
 
+        console.log('User saved successfully');
         closeModals();
         await loadUsers();
       } catch (error) {
         console.error('Save user error:', error);
-        alert('保存失败');
+        alert(error.message || '保存失败');
       }
     };
 
@@ -284,16 +306,8 @@ export default {
       getRoleName,
       formatDate,
       editUser,
-      deleteUser,
       saveUser,
-      closeModals,
-      showChangePwdModal,
-      openChangePwd,
-      closePwdModal,
-      newPassword,
-      changePassword,
-      pwdError,
-      pwdSuccess
+      closeModals
     };
   }
 };
