@@ -34,7 +34,7 @@ export const initMessaging = async () => {
       return messaging;
     }
   } catch (error) {
-    console.error('Messaging initialization error:', error);
+    // Messaging initialization error - removed console.error for production
   }
   return null;
 };
@@ -54,7 +54,7 @@ export const requestNotificationPermission = async () => {
         const token = await getToken(msg, {
           vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY
         });
-        console.log('FCM Token:', token);
+        // FCM Token logged - removed console.log for production
         return { status: 'granted', token };
       }
       return { status: 'granted', token: null };
@@ -63,7 +63,7 @@ export const requestNotificationPermission = async () => {
     // permission 可能是 'default'（用户关闭提示）或 'denied'
     return { status: permission, token: null };
   } catch (error) {
-    console.error('Notification permission error:', error);
+    // Notification permission error - removed console.error for production
     return { status: 'error', error, token: null };
   }
 };

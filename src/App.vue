@@ -161,6 +161,10 @@
 
     <!-- PWA安装提示 -->
     <PWAInstallPrompt />
+
+    <!-- 推送通知提示 -->
+    <PushNotificationPrompt />
+
     <!-- 当通知权限被阻止时给出指引 -->
     <AppleToast
       v-model:visible="toastVisible"
@@ -176,6 +180,7 @@ import { useUserStore } from '@/store/user';
 import syncService from '@/services/sync';
 import { requestNotificationPermission } from '@/services/supabase';
 import PWAInstallPrompt from '@/components/shared/PWAInstallPrompt.vue';
+import PushNotificationPrompt from '@/components/shared/PushNotificationPrompt.vue';
 import AppleToast from '@/components/shared/AppleToast.vue';
 
 export default {
@@ -183,6 +188,7 @@ export default {
 
   components: {
     PWAInstallPrompt,
+    PushNotificationPrompt,
     AppleToast
   },
 
@@ -220,12 +226,11 @@ export default {
               toastType.value = 'warning';
               toastVisible.value = true;
             } else if (res && res.status === 'granted') {
-              // 可选：提示成功或静默处理
-              console.log('通知权限已授予');
+              // 通知权限已授予 - removed console.log for production
             }
           }
         } catch (error) {
-          console.error('通知权限请求失败:', error);
+          // 通知权限请求失败 - removed console.error for production
         }
       }
     };

@@ -139,6 +139,7 @@
     <AppleCard class="dashboard-content">
       <RecordsList v-if="activeTab === 'records'" />
       <UserManagement v-if="activeTab === 'users'" />
+      <AnnouncementsManagement v-if="activeTab === 'announcements'" />
       <DataAnalytics v-if="activeTab === 'analytics'" />
     </AppleCard>
 
@@ -227,6 +228,7 @@ import AppleLoading from '@/components/shared/AppleLoading.vue';
 import AppleToast from '@/components/shared/AppleToast.vue';
 import RecordsList from './RecordsList.vue';
 import UserManagement from './UserManagement.vue';
+import AnnouncementsManagement from './AnnouncementsManagement.vue';
 import DataAnalytics from './DataAnalytics.vue';
 
 export default {
@@ -239,6 +241,7 @@ export default {
     AppleToast,
     RecordsList,
     UserManagement,
+    AnnouncementsManagement,
     DataAnalytics
   },
 
@@ -254,6 +257,7 @@ export default {
     const tabs = [
       { id: 'records', label: '打卡记录' },
       { id: 'users', label: '用户管理' },
+      { id: 'announcements', label: '公告管理' },
       { id: 'analytics', label: '数据分析' }
     ];
 
