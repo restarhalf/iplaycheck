@@ -11,8 +11,8 @@ self.addEventListener('push', (event) => {
 
   const options = {
     body: data.notification?.body || data.body || '您有新的消息',
-    icon: data.notification?.icon || '/icon-192x192.png',
-    badge: data.notification?.badge || '/icon-192x192.png',
+    icon: data.notification?.icon || '/icon.jpg',
+    badge: data.notification?.badge || '/icon.jpg',
     tag: data.notification?.tag || data.data?.announcementId || 'time-tracking-notification',
     requireInteraction: data.notification?.requireInteraction || false,
     data: data.data || data,

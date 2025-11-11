@@ -98,8 +98,8 @@ export const useAnnouncementsStore = defineStore('announcements', {
               body: JSON.stringify({
                 title: '新公告',
                 body: announcement.title,
-                icon: '/icon-192x192.png',
-                badge: '/icon-192x192.png',
+                icon: '/icon.jpg',
+                badge: '/icon.jpg',
                 tag: `announcement-${announcement.id}`,
                 data: {
                   type: 'announcement',
@@ -129,8 +129,8 @@ export const useAnnouncementsStore = defineStore('announcements', {
         if ('Notification' in window && Notification.permission === 'granted') {
           new Notification('新公告', {
             body: announcement.title,
-            icon: '/icon-192x192.png',
-            badge: '/icon-192x192.png',
+            icon: '/icon.jpg',
+            badge: '/icon.jpg',
             tag: `announcement-${announcement.id}`,
             requireInteraction: false,
             data: { announcementId: announcement.id }
@@ -141,8 +141,8 @@ export const useAnnouncementsStore = defineStore('announcements', {
         if ('Notification' in window && Notification.permission === 'granted') {
           new Notification('新公告', {
             body: announcement.title,
-            icon: '/icon-192x192.png',
-            badge: '/icon-192x192.png'
+            icon: '/icon.jpg',
+            badge: '/icon.jpg'
           });
         }
       }
@@ -187,7 +187,7 @@ export const useAnnouncementsStore = defineStore('announcements', {
             body: announcement.content.length > 100
               ? announcement.content.substring(0, 100) + '...'
               : announcement.content,
-            icon: '/icon-192x192.png',
+            icon: '/icon.jpg',
             tag: `announcement-${announcement.id}`,
             requireInteraction: true,
             data: {
@@ -242,8 +242,8 @@ export const useAnnouncementsStore = defineStore('announcements', {
                   body: announcement.content.length > 100
                     ? announcement.content.substring(0, 100) + '...'
                     : announcement.content,
-                  icon: '/icon-192x192.png',
-                  badge: '/icon-192x192.png',
+                  icon: '/icon.jpg',
+                  badge: '/icon.jpg',
                   tag: `announcement-${announcement.id}`,
                   requireInteraction: true,
                   data: {
