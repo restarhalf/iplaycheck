@@ -6,15 +6,17 @@
         <AppleButton
           variant="danger"
           size="medium"
+          fullWidth
           @click="showClearConfirm = true"
         >
-          清空所有记录
+          清空记录
         </AppleButton>
         <AppleButton
           variant="primary"
           size="medium"
           :disabled="loading"
           :loading="loading"
+          fullWidth
           @click="refreshData"
         >
           刷新
@@ -620,8 +622,32 @@ export default {
     font: var(--title-1-emphasized);
   }
 
+  .header-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+  }
+
   .dashboard-stats {
     grid-template-columns: 1fr;
+  }
+
+  .stat-content {
+    padding: 12px;
+  }
+
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .stat-icon svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .stat-value {
+    font: var(--title-1-emphasized);
   }
 
   .dashboard-tabs {
@@ -632,6 +658,11 @@ export default {
   .tab-btn {
     flex: 1;
     min-width: 100px;
+  }
+
+  .modal-card.confirm-modal {
+    width: 95%;
+    max-width: none;
   }
 }
 </style>
