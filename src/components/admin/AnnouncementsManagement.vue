@@ -151,14 +151,6 @@
                 <AppleButton
                   variant="secondary"
                   type="button"
-                  @click="testNotification"
-                  style="margin-right: 10px;"
-                >
-                  测试通知
-                </AppleButton>
-                <AppleButton
-                  variant="secondary"
-                  type="button"
                   @click="closeModal"
                 >
                   取消
@@ -448,8 +440,7 @@ export default {
       openCreateModal,
       formatDate,
       truncateContent,
-      toggleExpanded,
-      testNotification
+      toggleExpanded
     };
   }
 };

@@ -175,7 +175,7 @@
             </p>
             <ul class="warning-list">
               <li>所有用户的打卡记录</li>
-              <li>Firebase 云端数据</li>
+              <li>Supabase 云端数据</li>
               <li>本地 IndexedDB 数据</li>
             </ul>
             <p class="warning-text danger">

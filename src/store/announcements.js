@@ -72,8 +72,6 @@ export const useAnnouncementsStore = defineStore('announcements', {
         case 'INSERT':
           if (newRecord.is_active) {
             this.announcements.unshift(newRecord);
-            // 发送推送通知
-            this.sendNotification(newRecord);
           }
           break;
         case 'UPDATE':

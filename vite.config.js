@@ -14,10 +14,6 @@ export default defineConfig(({ mode }) => ({
       manifest: false,
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json,vue,txt,woff2}'],
-        // 在生产环境中添加推送处理逻辑
-        ...(mode === 'production' && {
-          importScripts: ['firebase-messaging-sw.js']
-        }),
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -85,7 +81,7 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks: {
           'vue-vendor': ['vue', 'vue-router', 'pinia'],
-          'firebase-vendor': ['@supabase/supabase-js']
+          'supabase-vendor': ['@supabase/supabase-js']
         }
       }
     }
